@@ -19,7 +19,7 @@ class ParticleFilter(object):
 
     def get_cmd_vel(self, cmd_vel_msg):
         self.stamped_cmd_vel = cmd_vel_msg
-    
+
     def read_sensor(self, laser_msg):
         self.scan_ranges = laser_msg.ranges
 

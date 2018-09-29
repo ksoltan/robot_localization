@@ -1,46 +1,80 @@
-#/usr/bin/env python
-
-# dependencies up here
-
 import numpy as np
+from Particle import Particle
 
 class ParticleDistribution(object):
-    def __init__(self):
+    def __init__(self, num_particles=200):
         self.particle_list = []
-        self.num_particles = 200 #or something
-        self.num_hypotheses = 200 # get them from somewhere?
+        self.num_particles = num_particles
 
+    '''
+    Function: init_particles
+    Inputs: MapModel
+
+    Generates a random distribution of particles across the known map.
+    Particle positions must be valid points on the map.
+    All particles have equal weight.
+
+    '''
     def init_particles(self, map_model):
-        # generate list
-        for x in range(self.num_particles):
+        # Clear list before appending new particles
+        self.particle_list = []
+        # generate initial list of hypothesis (particles)
+        for i in range(self.num_particles):
+            # Find a random valid point on the map
             pos = map_model.get_valid_point()
-            weight = 1/self.num_particles
-            particle = Particle(pos=pos, weight=weight)
-            self.particle_list.append(particle)
+            # Set all particle weights to be equal
+            weight = 1.0 / self.num_particles
+            # Add new particle to list
+            self.particle_list.append(Particle(pos=pos, weight=weight))
 
+    '''
+    Function: resample
+    Inputs:
+
+    Regenerates particle distribution based on the relative weights of particles.
+    The same number of particles are chosen, but more particles will be chosen
+    near more likely positions.
+
+    '''
     def resample(self):
-        # todo: shuffle things around
-        # create list of indicies
-        particle_pos_indices = np.random.choice(self.num_hypotheses,self.num_particles, self.get_weights())
-        new_particles = []
-        # assign particles to indices
-        for p in self.num_particles:
-            index = particle_pos_indices[p]
-            particle = self.particle_list[index]
-            new_particles.append(particle)
-        self.particle_list = new_particles
+        # Generate a new list of particles, selecting based on their relative weights
+        # Use the normalized weights for np.choice, it expects probabilities to sum to 1
+        self.particle_list = np.random.choice(self.particle_list, self.num_particles, p=self.get_normalized_weights())
 
+    '''
+    Function: get_weights
+    Inputs:
+
+    Returns a list of particles' weights, in the order in which they appear in
+    the distribution.
+
+    '''
     def get_weights(self):
-        # todo
         particle_weights = []
         for p in self.particle_list:
-            weight = p.get_weight()
-            particle_weights.append(weight)
+            particle_weights.append(p.weight)
         return particle_weights
 
-"""
-        Particle Distribution
-list of Particle elements
-Represents the hypothesis of where our robot is
-resample()
-Repopulate the list of particles by selecting particles based on the new weight distribution
+    '''
+    Function: get_normalized_weights
+    Inputs:
+
+    Returns a list of weights which sum to 1, but have the same proportionality to each other.
+
+    '''
+    def get_normalized_weights(self):
+        weights = self.get_weights()
+        total = sum(weights) * 1.0
+        return [w / total for w in weights]
+
+
+    '''
+    Function: print_distribution
+    Inputs:
+
+    Display the particle list.
+
+    '''
+    def print_distribution(self):
+        for p in self.particle_list:
+            print p
