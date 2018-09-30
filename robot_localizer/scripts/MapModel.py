@@ -13,8 +13,12 @@ class MapModel(object):
 
     '''
     def get_valid_point(self):
-        return None
-
+        # x axis is width
+        max_width = self.occupancy_field.map.info.width
+        # y axis is height
+        max_height = self.occupancy_field.map.info.height
+        print("Map: {} x {}".format(max_width, max_height))
+        return (random.uniform(0, max_width), random.uniform(0, max_height))
 
     '''
     Function: get_predicted_obstacle_error

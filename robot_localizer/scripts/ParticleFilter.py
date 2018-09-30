@@ -30,7 +30,16 @@ class ParticleFilter(object):
     def read_sensor(self, laser_msg):
         self.scan_ranges = laser_msg.ranges
 
-    def run(self):
+    def run_filter(self):
+        # Update particle weights based on the sensor readings.
+        self.sensor_model.update_particle_weights(
+                            self.scan_ranges, self.p_distrib, self.map_model)
+
+        # Resample the particle distribution
+        self.p_distrib.resample()
+
+        # Propagate each particle with the motion model
+        self.motion_model.predict(self.stamped_cmd_vel, self.p_distrib)
         """
         run()
         Update weights with sensor model class (takes readings, particle distribution, map)

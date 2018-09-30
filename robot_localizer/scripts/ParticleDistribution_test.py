@@ -47,7 +47,8 @@ class ParticleFilterTest(unittest.TestCase):
         print("New Distrib")
         self.p_distrib.print_distribution()
 
-        # Not sure what a good way to test random selection is. Using print statements to compare
+        # To test random selection, would run this resampling multiple times
+        # and look at statistics of each selection and compare to relative weightsself.
         self.assertTrue(10, len(self.p_distrib.particle_list))
 
     def testResampleExtreme(self):

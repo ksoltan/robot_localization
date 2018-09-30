@@ -27,5 +27,9 @@ class MapModelTest(unittest.TestCase):
         self.assertTrue(abs(corr_x - new_x) <= 0.0001)
         self.assertTrue(abs(corr_y - new_y) <= 0.0001)
 
+    def testGetValidPoint(self):
+        point = self.map_model.get_valid_point()
+        self.assertTrue(type(point) == tuple)
+
 if __name__ == '__main__':
     unittest.main()

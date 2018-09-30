@@ -1,7 +1,8 @@
+from math import sqrt
 
 class SensorModel(object):
     def __init__(self):
-
+        pass
     '''
     Function: update_particle_weights
     Inputs: LaserScan scan_ranges
@@ -26,9 +27,45 @@ class SensorModel(object):
     Simulate the laser scanner by sweeping through 0 to 360 degree angles from
     the orientation of the position (theta) and finding the nearest obstacle from
     the map.
-    Find the difference between the simulated and real readings and assign a likelihood
-    inversely proportional to how large this difference is. The smaller the distance,
+    Based on the simulated and real readings, assign a likelihood inversely
+    proportional to how large this difference is. The smaller the distance,
     the higher the likelihood.
     '''
     def get_how_likely(self, scan_ranges, pos, map_model):
         angles = range(len(scan_ranges))
+        total_probability = 0
+        num_angles = 0
+        for angle in angles:
+            if(scan_ranges > 0.0):
+                num_angles += 1
+                reading = scan_ranges[angle]
+                # Take into account robot's yaw
+                yaw = pos[2]
+                angle_in_map = yaw + angle
+                # Error in obstacle reading for this angle
+                error = map_model.get_predicted_obstacle_error(
+                                            reading, pos[0], pos[1], angle_in_map)
+                total_probability += self.get_uniform_probability(map_model, error)
+        # Add together the probabilities of each angle reading, and average them.
+        return total_probability / num_angles
+
+    '''
+    Function: get_uniform_probability
+    Inputs: MapModel map_model
+            float error: (distance between the predicted and actual obstacle)
+
+    Return a probability inversely proportional to the error.
+    We assume that the maximum error is the maximum distance between two points
+    on the map. This would constitute a probability of 0.
+    If the error is 0, there is a definite certainty (probability 1) that the
+    given position produced the readings.
+    All other probabilities are uniformly distributed between these two extreme
+    cases.
+    '''
+    def get_uniform_probability(self, map_model, error):
+        # x axis is width
+        max_width = 1.0 * map_model.occupancy_field.map.info.width
+        # y axis is height
+        max_height = 1.0 * map_model.occupancy_field.map.info.height
+        max_distance = sqrt(max_width**2 + max**2)
+        return (max_distance - error) / max_distance
