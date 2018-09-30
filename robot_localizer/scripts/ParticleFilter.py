@@ -1,17 +1,24 @@
 #/usr/bin/env python
 
-# dependencies up here
+import rospy
+from geometry_msgs.msg import TwistStamped, Twist
+from sensor_msgs.msg import LaserScan
+
 
 class ParticleFilter(object):
     def __init__(self):
         rospy.init_node('Particle Filter Node')
-        # Subscribers
+
+        # Initialize subscribers to sensors and motors
+        #TODO: Check cmd_vel topic. cmd_vel is not stamped.
         rospy.Subscriber('/cmd_vel', TwistStamped, self.get_cmd_vel)
         rospy.Subscriber('/scan', LaserScan, self.read_sensor)
-        # save subscriptions
+
+        # Initilize attributes to save latest messages
         self.stamped_cmd_vel = None
         self.scan_ranges = None
-        # Class initializations
+
+        # Particle filter attributes
         self.p_distrib = ParticleDistribution()
         self.motion_model = MotionModel()
         self.sensor_model = SensorModel()

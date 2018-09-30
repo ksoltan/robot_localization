@@ -8,7 +8,7 @@ class ParticleDistribution(object):
 
     '''
     Function: init_particles
-    Inputs: MapModel
+    Inputs: MapModel map_model
 
     Generates a random distribution of particles across the known map.
     Particle positions must be valid points on the map.
