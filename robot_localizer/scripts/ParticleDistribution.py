@@ -77,4 +77,4 @@ class ParticleDistribution(object):
     '''
     def print_distribution(self):
         for p in self.particle_list:
-            print p
+            print(p)
