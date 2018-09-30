@@ -1,26 +1,15 @@
-# Things I don't understand:
-"""
-Where all the variables are coming from
-does this need an init?
-where are the selfs?
-How do @s work?
--- we should have a big documentation file of classes
-"""
+import rospy
 
 """
-Function: prev_time
-Inputs: none?
-Calls: none
-Returns: prev_time
+Functions
+predict - updates positions in p_distrib
+move - moves single pos based on current velocities
+get_delta_t - checks time change from last timestep
 
-Represents the last time we updated the motion
 """
-
 class MotionModel(object):
-    def __init__(self, cmd_vel, p_distrib):
-
-
-    def prev_time(self):
+    def __init__(self):
+        self.last_time_updated = 0.0 #keeping track of last velocity change
 
     """
     Function: predict
@@ -29,7 +18,6 @@ class MotionModel(object):
     Returns: p_distrib
 
     updates positions for all particles in p_distrib
-    --- pos inputs? no noise for now
     """
 
     def predict(cmd_vel, p_distrib):
@@ -48,20 +36,23 @@ class MotionModel(object):
 
     def move(pos, cmd_vel):
         # todo: add in accuracy model
-        delta_t = get_delta_t(cmd_vel.t)
-        pos.x += cmd_vel.x *cos(pos.theta) * delta_t
+        delta_t = get_delta_t(cmd_vel)
+        pos.x += cmd_vel.x * cos(pos.theta) * delta_t
         pos.y += cmd_vel.x * sin(pos.theta) * delta_t
         pos.theta += pos.theta * delta_t # maybe something about angular speed??
 
     """
     Function: get_delta_t
     Inputs: cmd_vel_t
-    Calls: prev_time
+    
+    Records time step and returns delta from last one
     """
 
-    def get_delta_t(cmd_vel_t):
-        if(cmd_vel_t - prev_time) == 0:
-            delta_t = Time.now() - prev_time
-            prev_time = Time.now()
-            return delta_t
-        return cmd_vel_t - prev_time
+    def get_delta_t(cmd_vel):
+        # get current time in float secs.necs
+        current_time = rospy.Time.now()
+        current_time = current_time.secs+(current_time.nsecs*1e-09)
+        # subtract last time updated from current time
+        delta_t = current_time - self.last_time_updated
+        self.last_time_updated = current_time
+        return delta_t
