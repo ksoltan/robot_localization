@@ -27,8 +27,8 @@ class ParticleFilter(object):
     def get_cmd_vel(self, cmd_vel_msg):
         self.stamped_cmd_vel = cmd_vel_msg
 
-    def read_sensor(self, laser_msg):
-        self.scan_ranges = laser_msg.ranges
+    def read_sensor(self, scan_msg):
+        self.scan_ranges = scan_msg.ranges
 
     def run_filter(self):
         # Update particle weights based on the sensor readings.

@@ -25,7 +25,7 @@ class MapModel(object):
     Inputs: int distance_reading (measurement from the laser scan)
             float x: (map frame)
             float y: (map frame)
-            int angle: degrees (map frame)
+            int angle: degrees (map frame) (must have accounted for robot's yaw)
 
     Use a laser scan reading to project the theoretical position of where an obstacle
     should be in a direction (angle).
