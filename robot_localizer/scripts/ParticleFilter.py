@@ -24,8 +24,7 @@ class ParticleFilter(object):
         # Initilize attributes to save latest messages
         self.cmd_vel = None
         self.scan_ranges = None
-
-        # Particle filter attributes
+        # Class initializations
         self.p_distrib = ParticleDistribution()
         self.motion_model = MotionModel()
         self.sensor_model = SensorModel()
