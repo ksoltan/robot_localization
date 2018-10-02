@@ -3,7 +3,7 @@ import rospy
 """
 Functions
 predict - updates positions in p_distrib
-move - moves single pos based on current velocities
+move - (todo: noise) - moves single pos based on current velocities
 get_delta_t - checks time change from last timestep
 
 """
