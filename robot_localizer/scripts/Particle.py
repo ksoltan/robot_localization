@@ -56,16 +56,11 @@ class Particle(object):
     Inputs:
 
     Return a Marker Arrow object. The origin of the arrow is the x, y position of
-    the particle. The direction of the arrow is the angle (theta). The magnitude
-    and color of the arrow are proportional to the particle's weight.
+    the particle. The direction of the arrow is the angle (theta). The color of
+    the arrow is proportional to the particle's weight.
 
     '''
     def get_marker(self):
-        # Calculate end point of the arrow
-        max_magnitude = 1
-        end_pt_x = self.x + cos(radians(self.theta)) * (self._weight * max_magnitude)
-        end_pt_y = self.y + sin(radians(self.theta)) * (self._weight * max_magnitude)
-
         # Calculate color. Blue represents likelihood of 1. Red is likelihood 0.
         min_color = ColorRGBA(r=1.0, g=0.0, b=0.0, a=1)
         max_color = ColorRGBA(r=0.0, g=0.0, b=1.0, a=1)
@@ -77,8 +72,12 @@ class Particle(object):
         marker = Marker()
         marker.header.frame_id = "map"
         marker.type = Marker.ARROW
-        marker.points = [Vector3(self.x, self.y, 0), Vector3(end_pt_x, end_pt_y, 0)]
+        marker.pose.position.x = self.x
+        marker.pose.position.y = self.y
+        # Euler to Quaternion angle
+        marker.pose.orientation.w = cos(self.theta / 2.0)
+        marker.pose.orientation.z = sin(self.theta / 2.0)
         marker.color = ColorRGBA(r=new_r, g=new_g, b=new_b, a=1)
-        marker.scale = Vector3(1, 1, 1)
-        print("Added marker: x, y: {}, {}; theta: {}".format(self.x, self.y, self.theta))
+        marker.scale = Vector3(0.2, 0.01, 0.01)
+
         return marker

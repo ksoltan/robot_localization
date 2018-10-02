@@ -14,12 +14,12 @@ class MapModel(object):
 
     '''
     def get_valid_point(self):
+        #TODO: Use the pose estimate function, like in the example. This may need to move out of map model
         # x axis is width
-        max_width = self.occupancy_field.map.info.width
+        max_width = self.occupancy_field.map.info.width * self.occupancy_field.map.info.resolution
         # y axis is height
-        max_height = self.occupancy_field.map.info.height
-        print("Map: {} x {}".format(max_width, max_height))
-        return (random.uniform(0, max_width), random.uniform(0, max_height))
+        max_height = self.occupancy_field.map.info.height * self.occupancy_field.map.info.resolution
+        return (random.uniform(0, 2), random.uniform(0, 2))
 
     '''
     Function: get_predicted_obstacle_error

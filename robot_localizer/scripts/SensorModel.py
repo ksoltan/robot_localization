@@ -3,6 +3,7 @@ from math import sqrt
 class SensorModel(object):
     def __init__(self):
         pass
+
     '''
     Function: update_particle_weights
     Inputs: LaserScan scan_ranges
@@ -65,8 +66,8 @@ class SensorModel(object):
     '''
     def get_uniform_probability(self, map_model, error):
         # x axis is width
-        max_width = 1.0 * map_model.occupancy_field.map.info.width
+        max_width = 1.0 * map_model.occupancy_field.map.info.width * map_model.occupancy_field.map.info.resolution
         # y axis is height
-        max_height = 1.0 * map_model.occupancy_field.map.info.height
+        max_height = 1.0 * map_model.occupancy_field.map.info.height * map_model.occupancy_field.map.info.resolution
         max_distance = sqrt(max_width**2 + max**2)
         return (max_distance - error) / max_distance

@@ -75,16 +75,20 @@ class ParticleDistribution(object):
     Inputs:
 
     Returns a MarkerArray representing the particle distribution. Each particle is
-    an arrow, showing its x, y, theta position. Its magnitude and color are proportional
-    to its weight.
+    an arrow, showing its x, y, theta position. Its color is proportional to its
+    weight.
 
     '''
     def get_particle_marker_array(self):
         marker_array = MarkerArray()
         all_markers = []
-
+        p_idx = 0
         for p in self.particle_list:
-            all_markers.append(p.get_marker())
+            marker = p.get_marker()
+            marker.id = p_idx # Must give each marker unique id to display all markers in the array!
+            all_markers.append(marker)
+            p_idx += 1
+
         marker_array.markers = all_markers
 
         return marker_array

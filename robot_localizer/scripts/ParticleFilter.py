@@ -33,6 +33,7 @@ class ParticleFilter(object):
 
         # After map model has been initialized, create the initial particle distribution
         self.p_distrib.init_particles(self.map_model)
+        self.particle_pose_pub.publish(self.p_distrib.get_particle_marker_array())
 
     def get_cmd_vel(self, cmd_vel_msg):
         self.cmd_vel = cmd_vel_msg
@@ -50,12 +51,6 @@ class ParticleFilter(object):
             # Resample the particle distribution
             self.p_distrib.resample()
 
-        x = self.p_distrib.get_particle_marker_array()
-        x = x.markers
-        self.particle_obstacles_pub.publish(x[0])
-        print("Marker: {}, {} to {}, {}".format(x[0].points[0].x, x[0].points[0].y, x[0].points[1].x, x[0].points[1].y))
-        print("Marker: color: {}, {}, {}, {}".format(x[0].color.r, x[0].color.g, x[0].color.b, x[0].color.a))
-        # Display the new distribution
         self.particle_pose_pub.publish(self.p_distrib.get_particle_marker_array())
 
         if(self.cmd_vel != None):
