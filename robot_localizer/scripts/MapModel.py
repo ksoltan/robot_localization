@@ -1,5 +1,6 @@
 from occupancy_field import OccupancyField
 from math import cos, sin, radians
+import random
 
 class MapModel(object):
     def __init__(self):
@@ -25,7 +26,7 @@ class MapModel(object):
     Inputs: int distance_reading (measurement from the laser scan)
             float x: (map frame)
             float y: (map frame)
-            int angle: degrees (map frame)
+            int angle: degrees (map frame) (must have accounted for robot's yaw)
 
     Use a laser scan reading to project the theoretical position of where an obstacle
     should be in a direction (angle).

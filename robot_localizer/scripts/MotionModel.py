@@ -9,7 +9,7 @@ get_delta_t - checks time change from last timestep
 """
 class MotionModel(object):
     def __init__(self):
-        self.last_time_updated = 0.0 #keeping track of last velocity change
+        self.last_time_updated = 0.0 # keeping track of last time the velocity changed
 
     """
     Function: predict
@@ -17,11 +17,11 @@ class MotionModel(object):
     Calls:
     Returns: p_distrib
 
-    updates positions for all particles in p_distrib
+    Updates positions for all particles in p_distrib
     """
 
     def predict(cmd_vel, p_distrib):
-        for each p in p_distrib:
+        for p in p_distrib:
             new_pos = move(p.pos, cmd_vel)
             p.pos = new_pos
         return p_distrib
@@ -44,7 +44,7 @@ class MotionModel(object):
     """
     Function: get_delta_t
     Inputs: cmd_vel_t
-    
+
     Records time step and returns delta from last one
     """
 

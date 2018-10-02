@@ -1,14 +1,27 @@
-#/usr/bin/env python
+#!/usr/bin/env python
 
-# dependencies up here
+import rospy
+from geometry_msgs.msg import Twist
+from sensor_msgs.msg import LaserScan
+from visualization_msgs.msg import MarkerArray, Marker
+from ParticleDistribution import ParticleDistribution
+from MotionModel import MotionModel
+from SensorModel import SensorModel
+from MapModel import MapModel
+
 
 class ParticleFilter(object):
     def __init__(self):
-        rospy.init_node('Particle Filter Node')
-        # Subscribers
+        rospy.init_node('pf_node')
+
+        # Initialize subscribers to sensors and motors
         rospy.Subscriber('/cmd_vel', Twist, self.get_cmd_vel)
         rospy.Subscriber('/scan', LaserScan, self.read_sensor)
-        # save subscriptions
+        # Initialize publishers for visualization
+        self.particle_pose_pub = rospy.Publisher('/particle_poses', MarkerArray, queue_size=10)
+        self.particle_obstacles_pub = rospy.Publisher('/particle_obstacles', Marker, queue_size=10)
+
+        # Initilize attributes to save latest messages
         self.cmd_vel = None
         self.scan_ranges = None
         # Class initializations
@@ -17,19 +30,44 @@ class ParticleFilter(object):
         self.sensor_model = SensorModel()
         self.map_model = MapModel()
 
+        # After map model has been initialized, create the initial particle distribution
+        self.p_distrib.init_particles(self.map_model)
+
     def get_cmd_vel(self, cmd_vel_msg):
         self.cmd_vel = cmd_vel_msg
 
-    def read_sensor(self, laser_msg):
-        self.scan_ranges = laser_msg.ranges
+    def read_sensor(self, scan_msg):
+        self.scan_ranges = scan_msg.ranges
+
+    def run_filter(self):
+        # Update particle weights based on the sensor readings.
+        if(self.scan_ranges != None):
+            self.sensor_model.update_particle_weights(
+                            self.scan_ranges, self.p_distrib, self.map_model)
+            # Display the new distribution
+            self.particle_pose_pub.publish(self.p_distrib.get_particle_marker_array())
+            # Resample the particle distribution
+            self.p_distrib.resample()
+
+        x = self.p_distrib.get_particle_marker_array()
+        x = x.markers
+        self.particle_obstacles_pub.publish(x[0])
+        print("Marker: {}, {} to {}, {}".format(x[0].points[0].x, x[0].points[0].y, x[0].points[1].x, x[0].points[1].y))
+        print("Marker: color: {}, {}, {}, {}".format(x[0].color.r, x[0].color.g, x[0].color.b, x[0].color.a))
+        # Display the new distribution
+        self.particle_pose_pub.publish(self.p_distrib.get_particle_marker_array())
+
+        if(self.cmd_vel != None):
+            # Propagate each particle with the motion model
+            self.motion_model.predict(self.cmd_vel, self.p_distrib)
 
     def run(self):
-        """
-        run()
-        Update weights with sensor model class (takes readings, particle distribution, map)
-        Resample particle distribution with particle distribution class
-        Visualize current guess
-        Predict next step with motion model (takes cmd_vel, particle distribution)
-        Visualize next step
-        Current step = next step
-        """
+        last_time_updated = rospy.get_time()
+        while not rospy.is_shutdown():
+            if(rospy.get_time() - last_time_updated > 10):
+                self.run_filter()
+                last_time_updated = rospy.get_time()
+
+if __name__ == "__main__":
+    pf = ParticleFilter()
+    pf.run()
