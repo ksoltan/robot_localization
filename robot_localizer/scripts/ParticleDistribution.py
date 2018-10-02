@@ -1,8 +1,10 @@
 import numpy as np
 from Particle import Particle
+from visualization_msgs.msg import MarkerArray
+import random
 
 class ParticleDistribution(object):
-    def __init__(self, num_particles=200):
+    def __init__(self, num_particles=10):
         self.particle_list = []
         self.num_particles = num_particles
 
@@ -21,11 +23,12 @@ class ParticleDistribution(object):
         # generate initial list of hypothesis (particles)
         for i in range(self.num_particles):
             # Find a random valid point on the map
-            pos = map_model.get_valid_point()
+            x, y = map_model.get_valid_point()
+            theta = random.randint(0, 361)
             # Set all particle weights to be equal
             weight = 1.0 / self.num_particles
             # Add new particle to list
-            self.particle_list.append(Particle(pos=pos, weight=weight))
+            self.particle_list.append(Particle(pos=(x, y, theta), weight=weight))
 
     '''
     Function: resample
@@ -66,6 +69,25 @@ class ParticleDistribution(object):
         weights = self.get_weights()
         total = sum(weights) * 1.0
         return [w / total for w in weights]
+
+    '''
+    Function: get_particle_marker_array
+    Inputs:
+
+    Returns a MarkerArray representing the particle distribution. Each particle is
+    an arrow, showing its x, y, theta position. Its magnitude and color are proportional
+    to its weight.
+
+    '''
+    def get_particle_marker_array(self):
+        marker_array = MarkerArray()
+        all_markers = []
+
+        for p in self.particle_list:
+            all_markers.append(p.get_marker())
+        marker_array.markers = all_markers
+
+        return marker_array
 
 
     '''

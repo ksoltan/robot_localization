@@ -1,5 +1,6 @@
 from occupancy_field import OccupancyField
 from math import cos, sin, radians
+import random
 
 class MapModel(object):
     def __init__(self):

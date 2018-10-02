@@ -32,7 +32,8 @@ class SensorModel(object):
     the higher the likelihood.
     '''
     def get_how_likely(self, scan_ranges, pos, map_model):
-        angles = range(len(scan_ranges))
+        # angles = range(len(scan_ranges))
+        angles = [0, 45, 90, 135, 180, 225, 360] # Use only some of the angles for now
         total_probability = 0
         num_angles = 0
         for angle in angles:
