@@ -29,6 +29,7 @@ class ParticleDistribution(object):
             weight = 1.0 / self.num_particles
             # Add new particle to list
             self.particle_list.append(Particle(pos=(x, y, theta), weight=weight))
+        return self.particle_list
 
     '''
     Function: resample

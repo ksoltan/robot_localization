@@ -44,7 +44,7 @@ class ParticleFilter(object):
         # Update particle weights based on the sensor readings.
         if(self.scan_ranges != None):
             self.sensor_model.update_particle_weights(
-                            self.scan_ranges, self.p_distrib, self.map_model)
+                            self.scan_ranges, self.p_distrib.particle_list, self.map_model)
             # Display the new distribution
             self.particle_pose_pub.publish(self.p_distrib.get_particle_marker_array())
             # Resample the particle distribution
