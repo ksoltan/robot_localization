@@ -69,5 +69,5 @@ class SensorModel(object):
         max_width = 1.0 * map_model.occupancy_field.map.info.width * map_model.occupancy_field.map.info.resolution
         # y axis is height
         max_height = 1.0 * map_model.occupancy_field.map.info.height * map_model.occupancy_field.map.info.resolution
-        max_distance = sqrt(max_width**2 + max**2)
+        max_distance = sqrt(max_width**2 + max_height**2)
         return (max_distance - error) / max_distance
