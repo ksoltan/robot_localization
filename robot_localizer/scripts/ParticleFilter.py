@@ -54,7 +54,8 @@ class ParticleFilter(object):
 
         if(self.cmd_vel != None):
             # Propagate each particle with the motion model
-            self.motion_model.predict(self.cmd_vel, self.p_distrib)
+            print("AKSJDHFLAUGHAWSVHKASJDHFKASJDHFAKSDJFAKSJDFHK")
+            self.motion_model.predict((self.cmd_vel),self.p_distrib.particle_list)
 
     def run(self):
         last_time_updated = rospy.get_time()
