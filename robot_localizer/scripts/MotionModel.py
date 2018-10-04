@@ -1,5 +1,5 @@
 import rospy
-
+from math import cos, sin, radians
 """
 Functions
 predict - updates positions in p_distrib
@@ -20,10 +20,13 @@ class MotionModel(object):
     Updates positions for all particles in p_distrib
     """
 
-    def predict(cmd_vel, p_distrib):
+    def predict(self, cmd_vel, p_distrib):
+        delta_t = self.get_delta_t()
         for p in p_distrib:
-            new_pos = move(p.pos, cmd_vel)
-            p.pos = new_pos
+            new_x, new_y, new_theta = self.move(p, cmd_vel, delta_t)
+            p.x = new_x
+            p.y = new_y
+            p.theta = new_theta
 
     """
     Function: move
@@ -33,12 +36,14 @@ class MotionModel(object):
     Updates position based on time since last velocity update
     """
 
-    def move(pos, cmd_vel):
+    def move(self, particle, cmd_vel, delta_t):
         # todo: add in accuracy model
-        delta_t = self.get_delta_t()
-        pos.x += cmd_vel.x * cos(pos.theta) * delta_t
-        pos.y += cmd_vel.x * sin(pos.theta) * delta_t
-        pos.theta += pos.theta * delta_t # maybe something about angular speed??
+        # delta_t = self.get_delta_t()
+        particle.x += cmd_vel.linear.x * cos(radians(particle.theta)) * delta_t
+        particle.y += cmd_vel.linear.x * sin(radians(particle.theta)) * delta_t
+        particle.theta += particle.theta * delta_t # maybe something about angular speed??
+        particle.theta %= 360
+        return particle.pos
 
     """
     Function: get_delta_t
@@ -47,7 +52,7 @@ class MotionModel(object):
     Records time step and returns delta from last one
     """
 
-    def get_delta_t():
+    def get_delta_t(self):
         # get current time in float secs.necs
         current_time = rospy.Time.now()
         current_time = current_time.secs+(current_time.nsecs*1e-09)

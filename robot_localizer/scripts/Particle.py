@@ -4,41 +4,39 @@ from std_msgs.msg import ColorRGBA
 from math import cos, sin, radians
 
 class Particle(object):
-    def __init__(self, pos, weight):
-        self._pos = pos
+    def __init__(self, x, y, theta, weight):
+        self._x = x
+        self._y = y
+        self._theta = theta
         self._weight = weight
 
     @property
     def pos(self):
-        return self._pos
-
-    @pos.setter
-    def pos(self, new_pos):
-        self._pos = new_pos
+        return (self._x, self._y, self._theta)
 
     @property
     def x(self):
-        return self._pos[0]
+        return self._x
 
     @x.setter
     def x(self, new_x):
-        self._pos[0] = new_x
+        self._x = new_x
 
     @property
     def y(self):
-        return self._pos[1]
+        return self._y
 
     @y.setter
     def y(self, new_y):
-        self._pos[1] = new_y
+        self._y = new_y
 
     @property
     def theta(self):
-        return self._pos[2]
+        return self._theta
 
     @theta.setter
     def theta(self, new_theta):
-        self._pos[2] = new_theta
+        self._theta = new_theta
 
     @property
     def weight(self):
@@ -49,7 +47,7 @@ class Particle(object):
         self._weight = new_weight
 
     def __str__(self):
-        return "(Pos: {}: Weight: {})".format(self._pos, self._weight)
+        return "(Pos: {}: Weight: {})".format(self.pos, self.weight)
 
     '''
     Function: get_marker

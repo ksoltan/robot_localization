@@ -4,7 +4,9 @@
   <arg name="map_name" default="ac109_1"/>
 
   <node name="map_server" pkg="map_server" type="map_server" args="$(find robot_localizer)/maps/$(arg map_name).yaml"/>
+  <node name="bag_player" pkg="rosbag" type="play" args="$(find robot_localizer)/bags/$(arg map_name).bag --clock --pause" output="screen"/>
 
+  <include file="$(find neato_node)/launch/set_urdf.launch"/>
 
  <group if="$(arg use_builtin)">
   <include file="$(find neato_2dnav)/launch/includes/amcl.launch.xml">
@@ -16,7 +18,7 @@
  </group>
 
  <group unless="$(arg use_builtin)">
-  <node name="pf" pkg="robot_localizer" type="ParticleFilter.py" output="screen">
+  <node name="pf" pkg="robot_localizer" type="ParticleFilter.py" output="screen" launch-prefix="gnome-terminal --command">
     <remap from="scan" to="$(arg scan_topic)"/>
   </node>
 </group>

@@ -24,6 +24,8 @@ class ParticleFilter(object):
         # Initilize attributes to save latest messages
         self.cmd_vel = None
         self.scan_ranges = None
+        self.latest_cmd_vel = None
+        self.latest_scan_ranges = None
         # Class initializations
         self.p_distrib = ParticleDistribution()
         self.motion_model = MotionModel()
@@ -35,10 +37,10 @@ class ParticleFilter(object):
         self.particle_pose_pub.publish(self.p_distrib.get_particle_marker_array())
 
     def get_cmd_vel(self, cmd_vel_msg):
-        self.cmd_vel = cmd_vel_msg
+        self.latest_cmd_vel = cmd_vel_msg
 
     def read_sensor(self, scan_msg):
-        self.scan_ranges = scan_msg.ranges
+        self.latest_scan_ranges = scan_msg.ranges
 
     def run_filter(self):
         # Update particle weights based on the sensor readings.
@@ -54,15 +56,26 @@ class ParticleFilter(object):
 
         if(self.cmd_vel != None):
             # Propagate each particle with the motion model
-            print("AKSJDHFLAUGHAWSVHKASJDHFKASJDHFAKSDJFAKSJDFHK")
-            self.motion_model.predict((self.cmd_vel),self.p_distrib.particle_list)
+            print("Old distribution")
+            self.p_distrib.print_distribution()
+            print("Propagating the particle.")
+            self.motion_model.predict(self.cmd_vel, self.p_distrib.particle_list)
+            self.p_distrib.print_distribution()
 
     def run(self):
         last_time_updated = rospy.get_time()
         while not rospy.is_shutdown():
-            if(rospy.get_time() - last_time_updated > 10):
+            if(rospy.get_time() - last_time_updated > 1):
+                if(self.latest_cmd_vel != None):
+                    self.cmd_vel = self.latest_cmd_vel
+                if(self.latest_scan_ranges != None):
+                    self.scan_ranges = self.scan_ranges
+
                 self.run_filter()
+                
                 last_time_updated = rospy.get_time()
+                self.cmd_vel = self.latest_cmd_vel
+                self.scan_ranges = self.latest_scan_ranges
 
 if __name__ == "__main__":
     pf = ParticleFilter()

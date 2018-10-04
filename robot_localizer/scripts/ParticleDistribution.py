@@ -4,7 +4,7 @@ from visualization_msgs.msg import MarkerArray
 import random
 
 class ParticleDistribution(object):
-    def __init__(self, num_particles=10):
+    def __init__(self, num_particles=50):
         self.particle_list = []
         self.num_particles = num_particles
 
@@ -28,7 +28,7 @@ class ParticleDistribution(object):
             # Set all particle weights to be equal
             weight = 1.0 / self.num_particles
             # Add new particle to list
-            self.particle_list.append(Particle(pos=(x, y, theta), weight=weight))
+            self.particle_list.append(Particle(x=x, y=y, theta=theta, weight=weight))
         return self.particle_list
 
     '''
