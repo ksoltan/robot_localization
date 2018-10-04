@@ -24,7 +24,6 @@ class MotionModel(object):
         for p in p_distrib:
             new_pos = move(p.pos, cmd_vel)
             p.pos = new_pos
-        return p_distrib
 
     """
     Function: move
@@ -36,7 +35,7 @@ class MotionModel(object):
 
     def move(pos, cmd_vel):
         # todo: add in accuracy model
-        delta_t = get_delta_t(cmd_vel)
+        delta_t = self.get_delta_t()
         pos.x += cmd_vel.x * cos(pos.theta) * delta_t
         pos.y += cmd_vel.x * sin(pos.theta) * delta_t
         pos.theta += pos.theta * delta_t # maybe something about angular speed??
@@ -48,7 +47,7 @@ class MotionModel(object):
     Records time step and returns delta from last one
     """
 
-    def get_delta_t(cmd_vel):
+    def get_delta_t():
         # get current time in float secs.necs
         current_time = rospy.Time.now()
         current_time = current_time.secs+(current_time.nsecs*1e-09)
