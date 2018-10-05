@@ -22,4 +22,5 @@
     <remap from="scan" to="$(arg scan_topic)"/>
   </node>
 </group>
+
 </launch>

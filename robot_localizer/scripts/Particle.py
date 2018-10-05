@@ -46,8 +46,14 @@ class Particle(object):
     def weight(self, new_weight):
         self._weight = new_weight
 
+    def make_copy(self):
+        return Particle(x=self.x, y=self.y, theta=self.theta, weight=self.weight)
+
     def __str__(self):
         return "(Pos: {}: Weight: {})".format(self.pos, self.weight)
+
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y and self.theta == other.theta and self.weight == other.weight
 
     '''
     Function: get_marker

@@ -62,5 +62,49 @@ class ParticleFilterTest(unittest.TestCase):
         self.p_distrib.resample()
         [self.assertEqual(correct_particle, p) for p in self.p_distrib.particle_list]
 
+    def testNormalizeWeights(self):
+        for p in self.p_distrib.particle_list:
+            p.weight = random.uniform(0, 1)
+
+        self.p_distrib.normalize_weights()
+
+        correct_weights = self.p_distrib.get_normalized_weights()
+        weights = self.p_distrib.get_weights()
+        [self.assertTrue((abs(weights[i] - correct_weights[i])) <= 0.0001) for i in range(len(weights))]
+
+    def testNormalizedWeightsAfterResampling(self):
+        for p in self.p_distrib.particle_list:
+            p.weight = random.uniform(0, 0.5)
+        self.p_distrib.normalize_weights()
+        print("Distrib before resampling")
+        self.p_distrib.print_distribution()
+        print("Weight sum before resampling: {}".format(sum(self.p_distrib.get_weights())))
+
+        self.p_distrib.resample()
+        print("Distrib after resampling")
+        self.p_distrib.print_distribution()
+        print("Weight sum after resampling: {}".format(sum(self.p_distrib.get_weights())))
+
+        self.p_distrib.normalize_weights()
+        print("Distrib after normalizing")
+        self.p_distrib.print_distribution()
+        print("Weight sum after normalizing: {}".format(sum(self.p_distrib.get_weights())))
+        self.assertTrue(abs(1 - sum(self.p_distrib.get_weights())) <= 0.0001)
+
+    def testSpecificParticleNormalizedWeightsAfterResampling(self):
+        self.p_distrib.particle_list = [Particle(x=1.1026683979627143, y=1.3169624148597046, theta=204, weight=0.0409339465492),
+                                        Particle(x=0.4660179516836995, y=0.3570517416074323, theta=305, weight=0.199876196252),
+                                        Particle(x=1.9121964510843559, y=0.49645320731338294, theta=209, weight=0.1986675867),
+                                        Particle(x=1.1026683979627143, y=1.3169624148597046, theta=204, weight=0.0409339465492),
+                                        Particle(x=0.20860576164448363, y=0.2618577992238944, theta=318, weight=0.199474254139)]
+        print("Weird Distrib")
+        self.p_distrib.print_distribution()
+
+        self.p_distrib.normalize_weights()
+        self.assertTrue(abs(1 - sum(self.p_distrib.get_weights())) <= 0.0001)
+
+
+
+
 if __name__ == '__main__':
     unittest.main()

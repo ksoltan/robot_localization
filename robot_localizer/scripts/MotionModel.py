@@ -2,7 +2,7 @@ import rospy
 from math import cos, sin, radians
 """
 Functions
-predict - updates positions in p_distrib
+predict - updates positions in particle_list
 move - (todo: noise) - moves single pos based on current velocities
 get_delta_t - checks time change from last timestep
 
@@ -13,16 +13,16 @@ class MotionModel(object):
 
     """
     Function: predict
-    Inputs: cmd_vel, p_distrib
+    Inputs: cmd_vel, particle_list
     Calls:
-    Returns: p_distrib
+    Returns: particle_list
 
-    Updates positions for all particles in p_distrib
+    Updates positions for all particles in particle_list
     """
 
-    def predict(self, cmd_vel, p_distrib):
+    def predict(self, cmd_vel, particle_list):
         delta_t = self.get_delta_t()
-        for p in p_distrib:
+        for p in particle_list:
             new_x, new_y, new_theta = self.move(p, cmd_vel, delta_t)
             p.x = new_x
             p.y = new_y

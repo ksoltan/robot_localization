@@ -9,7 +9,6 @@ from MotionModel import MotionModel
 from SensorModel import SensorModel
 from MapModel import MapModel
 
-
 class ParticleFilter(object):
     def __init__(self):
         rospy.init_node('pf_node')
@@ -45,22 +44,30 @@ class ParticleFilter(object):
     def run_filter(self):
         # Update particle weights based on the sensor readings.
         if(self.scan_ranges != None):
+            # print("Scan ranges: 0: {}, 90: {}, 180: {}, 270: {}".format(self.scan_ranges[0], self.scan_ranges[90], self.scan_ranges[180], self.scan_ranges[270]))
+            self.p_distrib.print_distribution()
             self.sensor_model.update_particle_weights(
                             self.scan_ranges, self.p_distrib.particle_list, self.map_model)
+            self.p_distrib.normalize_weights()
+            print("Updated with weights")
+            self.p_distrib.print_distribution()
             # Display the new distribution
             self.particle_pose_pub.publish(self.p_distrib.get_particle_marker_array())
             # Resample the particle distribution
+            print("Resample")
             self.p_distrib.resample()
+            self.p_distrib.normalize_weights()
 
         self.particle_pose_pub.publish(self.p_distrib.get_particle_marker_array())
 
-        if(self.cmd_vel != None):
-            # Propagate each particle with the motion model
-            print("Old distribution")
-            self.p_distrib.print_distribution()
-            print("Propagating the particle.")
-            self.motion_model.predict(self.cmd_vel, self.p_distrib.particle_list)
-            self.p_distrib.print_distribution()
+        # if(self.cmd_vel != None):
+        #     print("Cmd_vel: x: {}, y: {}, theta: {}".format(self.cmd_vel.linear.x, self.cmd_vel.linear.y, self.cmd_vel.angular.z))
+        #     # Propagate each particle with the motion model
+        #     print("Old distribution")
+        #     self.p_distrib.print_distribution()
+        #     print("Propagating the particle.")
+        #     self.motion_model.predict(self.cmd_vel, self.p_distrib.particle_list)
+        #     self.p_distrib.print_distribution()
 
     def run(self):
         last_time_updated = rospy.get_time()
@@ -70,9 +77,8 @@ class ParticleFilter(object):
                     self.cmd_vel = self.latest_cmd_vel
                 if(self.latest_scan_ranges != None):
                     self.scan_ranges = self.scan_ranges
-
                 self.run_filter()
-                
+
                 last_time_updated = rospy.get_time()
                 self.cmd_vel = self.latest_cmd_vel
                 self.scan_ranges = self.latest_scan_ranges

@@ -7,16 +7,18 @@ class SensorModel(object):
     '''
     Function: update_particle_weights
     Inputs: LaserScan scan_ranges
-            ParticleDistribution p_distrib
+            ParticleDistribution particle_list
             MapModel map_model
 
     Assign weights to particles based on how likely the laser scan readings would
     have come from their respective positions.
 
     '''
-    def update_particle_weights(self, scan_ranges, p_distrib, map_model):
-        for p in p_distrib:
+    def update_particle_weights(self, scan_ranges, particle_list, map_model):
+        print("Sensor model updating particle weights.")
+        for p in particle_list:
             p.weight = self.get_how_likely(scan_ranges, p.pos, map_model)
+            print(p)
 
     '''
     Function: get_how_likely

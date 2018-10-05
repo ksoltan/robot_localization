@@ -4,7 +4,7 @@ from visualization_msgs.msg import MarkerArray
 import random
 
 class ParticleDistribution(object):
-    def __init__(self, num_particles=50):
+    def __init__(self, num_particles=100):
         self.particle_list = []
         self.num_particles = num_particles
 
@@ -43,7 +43,28 @@ class ParticleDistribution(object):
     def resample(self):
         # Generate a new list of particles, selecting based on their relative weights
         # Use the normalized weights for np.choice, it expects probabilities to sum to 1
-        self.particle_list = np.random.choice(self.particle_list, self.num_particles, p=self.get_normalized_weights())
+        particle_pos_indices = np.random.choice(range(self.num_particles),self.num_particles, p=self.get_normalized_weights())
+        new_particles = []
+        # assign particles to indices
+        for i in particle_pos_indices:
+            new_particle = self.particle_list[i].make_copy()
+            new_particles.append(new_particle)
+        self.particle_list = new_particles
+
+    '''
+    Function: normalize_weights
+    Inputs:
+
+    Normalize the distribution's weights to sum to 1.
+
+    '''
+    def normalize_weights(self):
+        weight_total = sum(self.get_weights()) * 1.0
+        for p in self.particle_list:
+            p.weight = p.weight / weight_total
+        #TODO: it seems like not all of the particle manipulation happens inside of ParticleDistribution
+        # which is inconvenient because normalizing the weights should always happen. Not too bad now, since
+        # the only place it is changed is Particle Filter.
 
     '''
     Function: get_weights
