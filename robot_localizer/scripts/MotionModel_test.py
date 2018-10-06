@@ -171,7 +171,5 @@ class MotionModelTest(unittest.TestCase):
     #     self.assertEqual(p_list, correct_list)
 
 
-
-
 if __name__ == '__main__':
     unittest.main()
