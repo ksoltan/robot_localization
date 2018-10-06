@@ -1,6 +1,6 @@
 import rospy
 from math import cos, sin, sqrt, radians, degrees
-from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import PoseStamped, PoseArray
 import tf
 
 """
@@ -19,6 +19,12 @@ class MotionModel(object):
         self.base_link_pose = PoseStamped()
         self.base_link_pose.header.stamp = rospy.Time(0)
         self.base_link_pose.header.frame_id = 'base_link'
+
+        self.pose_array = PoseArray()
+        self.pose_array.header.frame_id = "map"
+        self.pose_array.header.stamp = rospy.Time(0)
+
+
 
     '''
     Function: get_change_in_motion
@@ -88,7 +94,11 @@ class MotionModel(object):
         dx, dy, dtheta = self.get_change_in_motion(tf_helper, update_last_pose=True)
         for p in particle_list:
             # Get the pose change by propagating in the particle's frame of reference
-            # TODO: I think you can use an inverse transform here, but not sure.
-            p.x += dx * cos(dtheta + p.theta) + dy * cos(dtheta + p.theta + radians(90))
-            p.y += dx * sin(dtheta) + dy * sin(dtheta + radians(90))
+            p.x += dx * cos(dtheta + p.theta) - dy * sin(dtheta + p.theta)
+            p.y += dx * sin(dtheta + p.theta) + dy * cos(dtheta + p.theta)
             p.theta = (p.theta + degrees(dtheta)) % 360 # Wrap angle, may not be the greatest
+
+    def get_pose_array(self):
+        # Add the latest pose
+        self.pose_array.poses.append(self.last_odom_pose.pose)
+        return self.pose_array

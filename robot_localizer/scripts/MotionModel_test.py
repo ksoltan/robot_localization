@@ -10,6 +10,11 @@ import math
 from Particle import Particle
 from MotionModel import MotionModel
 
+'''
+To run this test:
+1. Launch roscore
+2. Play some bagfile???
+'''
 # Define a hacked listener.
 class Listener_Sketch(object):
     def __init__(self, dx=0, dy=0, dtheta=0):
@@ -164,8 +169,6 @@ class MotionModelTest(unittest.TestCase):
     #     correct_list = [Particle(x=6, y=0.5, theta=0),Particle(x=4.6, y=8.5, theta=1), Particle(x=-95, y=-944.5, theta=250)]
     #     self.motion_model.propagate(p_list, self.tf_helper)
     #     self.assertEqual(p_list, correct_list)
-
-
 
 
 if __name__ == '__main__':
