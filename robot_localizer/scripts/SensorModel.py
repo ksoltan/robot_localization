@@ -15,10 +15,9 @@ class SensorModel(object):
 
     '''
     def update_particle_weights(self, scan_ranges, particle_list, map_model):
-        print("Sensor model updating particle weights.")
         for p in particle_list:
             p.weight = self.get_how_likely(scan_ranges, p.pos, map_model)
-            print(p)
+            # print(p)
 
     '''
     Function: get_how_likely

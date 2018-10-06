@@ -1,7 +1,8 @@
 import numpy as np
 from Particle import Particle
-from visualization_msgs.msg import MarkerArray
+from geometry_msgs.msg import Pose, PoseArray
 import random
+from math import cos, sin, radians
 
 class ParticleDistribution(object):
     def __init__(self, num_particles=100):
@@ -93,27 +94,38 @@ class ParticleDistribution(object):
         return [w / total for w in weights]
 
     '''
-    Function: get_particle_marker_array
+    Function: get_particle_pose_array
     Inputs:
 
-    Returns a MarkerArray representing the particle distribution. Each particle is
-    an arrow, showing its x, y, theta position. Its color is proportional to its
-    weight.
+    Returns a PoseArray representing the particle distribution.
 
     '''
-    def get_particle_marker_array(self):
-        marker_array = MarkerArray()
-        all_markers = []
-        p_idx = 0
+    def get_particle_pose_array(self):
+        pose_array = PoseArray()
+        pose_array.header.frame_id = "map"
+
         for p in self.particle_list:
-            marker = p.get_marker()
-            marker.id = p_idx # Must give each marker unique id to display all markers in the array!
-            all_markers.append(marker)
-            p_idx += 1
+            pose_array.poses.append(p.get_pose())
 
-        marker_array.markers = all_markers
+        return pose_array
 
-        return marker_array
+    def get_pose_estimate(self):
+        avg_x = 0.0
+        avg_y = 0.0
+        avg_theta = 0.0
+
+        for p in self.particle_list:
+            avg_x += p.weight * p.x
+            avg_y += p.weight * p.y
+            avg_theta += p.weight * p.theta
+
+        pose = Pose()
+        pose.position.x = avg_x / self.num_particles
+        pose.position.y = avg_y / self.num_particles
+        pose.orientation.w = cos(radians(avg_theta) / self.num_particles / 2.0)
+        pose.orientation.z = sin(radians(avg_theta) / self.num_particles / 2.0)
+
+        return pose
 
 
     '''

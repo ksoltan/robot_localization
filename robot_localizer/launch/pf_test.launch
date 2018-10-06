@@ -18,7 +18,7 @@
  </group>
 
  <group unless="$(arg use_builtin)">
-  <node name="pf" pkg="robot_localizer" type="ParticleFilter.py" output="screen" launch-prefix="gnome-terminal --command">
+  <node name="pf" pkg="robot_localizer" type="ParticleFilter.py" output="screen">
     <remap from="scan" to="$(arg scan_topic)"/>
   </node>
 </group>
