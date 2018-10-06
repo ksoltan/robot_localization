@@ -18,6 +18,7 @@ class ParticleFilter(object):
         rospy.Subscriber('/scan', LaserScan, self.read_sensor)
         # Initialize publishers for visualization
         self.particle_pose_pub = rospy.Publisher('/particle_pose_array', PoseArray, queue_size=10)
+        self.odom_pose_pub = rospy.Publisher('odom_pose', PoseArray, queue_size=10)
         # self.particle_obstacles_pub = rospy.Publisher('/particle_obstacles', Marker, queue_size=10)
 
         self.latest_scan_ranges = []
@@ -63,6 +64,8 @@ class ParticleFilter(object):
     def update_pose_estimate(self):
         # Propagate the particles because the robot has moved. The sensor update
         # should happen on the new poses.
+        # Display the new pose
+        self.odom_pose_pub.publish(self.motion_model.get_pose_array())
         self.motion_model.propagate(self.p_distrib.particle_list, self.tf_helper)
         # self.p_distrib.print_distribution()
         pose_array = self.p_distrib.get_particle_pose_array()

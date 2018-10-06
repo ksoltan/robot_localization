@@ -10,6 +10,11 @@ import math
 from Particle import Particle
 from MotionModel import MotionModel
 
+'''
+To run this test:
+1. Launch roscore
+2. Play some bagfile???
+'''
 # Define a hacked listener.
 class Listener_Sketch(object):
     def __init__(self, dx=0, dy=0, dtheta=0):
