@@ -71,7 +71,6 @@ class SensorModelTest(unittest.TestCase):
 if __name__ == '__main__':
     unittest.main()
 
-
 """what do I want to test?
 - whether particle weights are updating accurately
 
