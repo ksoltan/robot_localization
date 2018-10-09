@@ -1,5 +1,5 @@
 import rospy
-from math import cos, sin, sqrt, radians, degrees
+from math import cos, sin, sqrt, radians, degrees, atan2
 from geometry_msgs.msg import PoseStamped, PoseArray
 import tf
 
@@ -24,8 +24,6 @@ class MotionModel(object):
         self.pose_array.header.frame_id = "map"
         self.pose_array.header.stamp = rospy.Time(0)
 
-
-
     '''
     Function: get_change_in_motion
     Inputs: TFHelper tf_helper
@@ -42,12 +40,15 @@ class MotionModel(object):
     def get_change_in_motion(self, tf_helper, update_last_pose=False):
         # Get the latest odom pose
         try:
-            (trans,rot) = tf_helper.tf_listener.lookupTransform('/base_link', '/odom', rospy.Time(0))
+            # (trans,rot) = tf_helper.tf_listener.lookupTransform('/base_link', '/odom', rospy.Time(0))
             # print("Got the transform")
 
             new_odom_pose = tf_helper.tf_listener.transformPose('odom', self.base_link_pose)
+            print("New Odom Pose: {}".format(new_odom_pose))
             new_odom_x, new_odom_y, new_odom_theta = tf_helper.convert_pose_to_xy_and_theta(new_odom_pose.pose)
             last_odom_x, last_odom_y, last_odom_theta = tf_helper.convert_pose_to_xy_and_theta(self.last_odom_pose.pose)
+
+            print("new_odom_x: {}, new_odom_y: {}, new_odom_theta: {}".format(new_odom_x, new_odom_y, new_odom_theta))
 
             x_change = new_odom_x - last_odom_x
             y_change = new_odom_y - last_odom_y
@@ -89,14 +90,18 @@ class MotionModel(object):
     Updates the last saved odom pose in motion model.
     """
     def propagate(self, particle_list, tf_helper):
-        # TODO: FIX THE PROPAGATION TO BE IN FRAME OF PARTICLE. CURRENTLY PROPAGATES AS CLOUD
         # Update the last odom pose in the process
         dx, dy, dtheta = self.get_change_in_motion(tf_helper, update_last_pose=True)
+        print("dx: {}, dy: {}, dtheta: {}".format(dx, dy, dtheta))
         for p in particle_list:
             # Get the pose change by propagating in the particle's frame of reference
-            p.x += dx * cos(dtheta + p.theta) - dy * sin(dtheta + p.theta)
-            p.y += dx * sin(dtheta + p.theta) + dy * cos(dtheta + p.theta)
-            p.theta = (p.theta + degrees(dtheta)) % 360 # Wrap angle, may not be the greatest
+            # Change odom change to polar coordinates, rotating into particle's frame
+            r = sqrt(dx**2 + dy**2)
+            angle = radians(p.theta)
+            p.x += r * cos(angle)
+            p.y += r * sin(angle)
+            p.theta = (p.theta + degrees(dtheta)) % 360 # Wrap angle
+            # print(p)
 
     def get_pose_array(self):
         # Add the latest pose

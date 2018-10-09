@@ -72,20 +72,20 @@ class ParticleFilter(object):
         pose_array.header.stamp = rospy.Time(0)
         self.particle_pose_pub.publish(pose_array)
 
-        # Update particle weights based on the sensor readings.
-        if(self.latest_scan_ranges != []):
-            scan_ranges = self.latest_scan_ranges # Assuming this will not change the object if we get a new scan.
-            self.sensor_model.update_particle_weights(
-                            scan_ranges, self.p_distrib.particle_list, self.map_model)
-            self.p_distrib.normalize_weights()
-            # Resample the particle distribution
-            print("Resample")
-            self.p_distrib.resample()
-            self.p_distrib.normalize_weights()
-            # Display the new distribution
-            pose_array = self.p_distrib.get_particle_pose_array()
-            pose_array.header.stamp = rospy.Time(0)
-            self.particle_pose_pub.publish(pose_array)
+        # # Update particle weights based on the sensor readings.
+        # if(self.latest_scan_ranges != []):
+        #     scan_ranges = self.latest_scan_ranges # Assuming this will not change the object if we get a new scan.
+        #     self.sensor_model.update_particle_weights(
+        #                     scan_ranges, self.p_distrib.particle_list, self.map_model)
+        #     self.p_distrib.normalize_weights()
+        #     # Resample the particle distribution
+        #     print("Resample")
+        #     self.p_distrib.resample()
+        #     self.p_distrib.normalize_weights()
+        #     # Display the new distribution
+        #     pose_array = self.p_distrib.get_particle_pose_array()
+        #     pose_array.header.stamp = rospy.Time(0)
+        #     self.particle_pose_pub.publish(pose_array)
 
         new_pose_estimate = self.p_distrib.get_pose_estimate() # Just Pose, not stamped
         return new_pose_estimate

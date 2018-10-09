@@ -5,7 +5,7 @@ import random
 from math import cos, sin, radians
 
 class ParticleDistribution(object):
-    def __init__(self, num_particles=100):
+    def __init__(self, num_particles=10):
         self.particle_list = []
         self.num_particles = num_particles
 

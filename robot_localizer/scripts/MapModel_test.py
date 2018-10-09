@@ -3,6 +3,9 @@ from MapModel import *
 import random
 from math import sqrt
 
+'''
+To run MapModelTest, you must have a map provider. Simply run one of the launch files.
+'''
 class MapModelTest(unittest.TestCase):
     def setUp(self):
         self.map_model = MapModel()

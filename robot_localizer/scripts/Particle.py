@@ -51,7 +51,10 @@ class Particle(object):
         return "(Pos: {}: Weight: {})".format(self.pos, self.weight)
 
     def __eq__(self, other):
-        return self.x == other.x and self.y == other.y and self.theta == other.theta and self.weight == other.weight
+        return abs(self.x - other.x) < 0.0001 and \
+                abs(self.y - other.y) < 0.0001 and \
+                abs(self.theta - other.theta) < 0.0001 and \
+                abs(self.weight - other.weight) < 0.0001
 
     '''
     Function: get_pose
@@ -65,7 +68,7 @@ class Particle(object):
         pose.position.x = self.x
         pose.position.y = self.y
         # Euler to Quaternion angle
-        pose.orientation.w = cos(self.theta / 2.0)
-        pose.orientation.z = sin(self.theta / 2.0)
+        pose.orientation.w = cos(radians(self.theta) / 2.0)
+        pose.orientation.z = sin(radians(self.theta) / 2.0)
 
         return pose

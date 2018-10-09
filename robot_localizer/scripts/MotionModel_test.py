@@ -20,7 +20,7 @@ class Listener_Sketch(object):
     def __init__(self, dx=0, dy=0, dtheta=0):
         self.dx = dx
         self.dy = dy
-        self.dtheta = dtheta
+        self.dtheta = radians(dtheta)
 
     def transformPose(self, to_frame, pose):
         p = PoseStamped()
@@ -34,7 +34,7 @@ class Listener_Sketch(object):
     def setNewTransform(self, dx, dy, dtheta):
         self.dx = dx
         self.dy = dy
-        self.dtheta = dtheta
+        self.dtheta = radians(dtheta)
 
 # Define functions from TFHelper needed in MotionModel
 class TFHelper_Sketch(object):
@@ -142,24 +142,38 @@ class MotionModelTest(unittest.TestCase):
     #     self.tf_helper.tf_listener.setNewTransform(dx=5, dy=0.5, dtheta=radians(5))
     #     self.assertTrue(self.motion_model.has_moved_enough(self.tf_helper, 3, 40))
     #
-    def testPropagateParticleNoRotationOneParticleAtOrigin(self):
-        self.tf_helper.tf_listener.setNewTransform(dx=5, dy=0.5, dtheta=0)
-        p_list = [Particle(x=0, y=0, theta=0)]
-        correct_list = [Particle(x=5, y=0.5, theta=0)]
-        self.motion_model.propagate(p_list, self.tf_helper)
-        self.assertEqual(p_list, correct_list)
+    # def testPropagateParticleNoRotationOneParticleAtOrigin(self):
+    #     self.tf_helper.tf_listener.setNewTransform(dx=5, dy=0.5, dtheta=0)
+    #     p_list = [Particle(x=0, y=0, theta=0)]
+    #     correct_list = [Particle(x=5, y=0.5, theta=0)]
+    #     self.motion_model.propagate(p_list, self.tf_helper)
+    #     self.assertEqual(p_list, correct_list)
+    #
+    # def testPropagateParticleOnlyRotationParticles(self):
+    #     self.tf_helper.tf_listener.setNewTransform(dx=0, dy=0, dtheta=radians(42))
+    #     p_list = [Particle(x=0, y=0, theta=0), Particle(x=0.4, y=5, theta=354), Particle(x=5, y=-100, theta=42)]
+    #     correct_list = [Particle(x=0, y=0, theta=42),Particle(x=0.4, y=5, theta=36), Particle(x=5, y=-100, theta=84)]
+    #     self.motion_model.propagate(p_list, self.tf_helper)
+    #     self.assertEqual(p_list, correct_list)
+    #
+    # def testPropagateParticleParticlesAtOriginOnlyTranslation(self):
+    #     self.tf_helper.tf_listener.setNewTransform(dx=1, dy=1, dtheta=0)
+    #     p_list = [Particle(x=0, y=0, theta=0),Particle(x=0, y=0, theta=90), Particle(x=0, y=0, theta=45)]
+    #     correct_list = [Particle(x=1, y=1, theta=0),Particle(x=-1, y=1, theta=90), Particle(x=0, y=sqrt(2), theta=45)]
+    #     self.motion_model.propagate(p_list, self.tf_helper)
+    #     self.assertEqual(p_list, correct_list)
+    #
+    # def testPropagateParticleParticlesNotAtOriginOnlyTranslation(self):
+    #     self.tf_helper.tf_listener.setNewTransform(dx=1, dy=1, dtheta=0)
+    #     p_list = [Particle(x=1, y=2, theta=0), Particle(x=5, y=-7, theta=90), Particle(x=-0.2, y=-0.5, theta=45)]
+    #     correct_list = [Particle(x=2, y=3, theta=0),Particle(x=4, y=-6, theta=90), Particle(x=-0.2, y=sqrt(2) - 0.5, theta=45)]
+    #     self.motion_model.propagate(p_list, self.tf_helper)
+    #     self.assertEqual(p_list, correct_list)
 
-    def testPropagateParticleOnlyRotationParticles(self):
-        self.tf_helper.tf_listener.setNewTransform(dx=0, dy=0, dtheta=radians(42))
-        p_list = [Particle(x=0, y=0, theta=0), Particle(x=0.4, y=5, theta=354), Particle(x=5, y=-100, theta=42)]
-        correct_list = [Particle(x=0, y=0, theta=42),Particle(x=0.4, y=5, theta=36), Particle(x=5, y=-100, theta=84)]
-        self.motion_model.propagate(p_list, self.tf_helper)
-        self.assertEqual(p_list, correct_list)
-
-    def testPropagateParticleParticlesAtOriginOnlyTranslation(self):
-        self.tf_helper.tf_listener.setNewTransform(dx=1, dy=1, dtheta=0)
-        p_list = [Particle(x=0, y=0, theta=0),Particle(x=0, y=0, theta=90), Particle(x=0, y=0, theta=45)]
-        correct_list = [Particle(x=1, y=1, theta=0),Particle(x=1, y=-1, theta=90), Particle(x=0.5, y=0.5, theta=45)]
+    def testPropagateParticleParticlesAtOriginOnlyTranslationAndRotation(self):
+        self.tf_helper.tf_listener.setNewTransform(dx=1, dy=1, dtheta=180)
+        p_list = [Particle(x=1, y=2, theta=0), Particle(x=5, y=-7, theta=90), Particle(x=-0.2, y=-0.5, theta=45)]
+        correct_list = [Particle(x=2, y=3, theta=180),Particle(x=4, y=-6, theta=270), Particle(x=-0.2, y=sqrt(2) - 0.5, theta=225)]
         self.motion_model.propagate(p_list, self.tf_helper)
         self.assertEqual(p_list, correct_list)
 
