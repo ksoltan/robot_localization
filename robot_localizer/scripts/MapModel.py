@@ -1,6 +1,9 @@
+import rospy
 from occupancy_field import OccupancyField
 from math import cos, sin, radians
 import random
+#from visualization_msgs.msgs import Marker
+
 
 class MapModel(object):
     def __init__(self):
@@ -58,3 +61,13 @@ class MapModel(object):
     '''
     def move_coordinate(self, x, y, angle, distance):
         return (x + cos(radians(angle)) * distance, y + sin(radians(angle)) * distance)
+
+    def get_origin_marker(self):
+        origin_pose = self.occupancy_field.map.info.origin
+        """header = Header(frame_id = "map",stamp=rospy.Time(0))
+        pose = origin_pose
+        scale = Vector3(1,1,1)
+        color = ColorRGBA(255,0,0,255)
+        type = 2
+        origin_marker = Marker(header=header,pose=pose,scale=scale,color=color,type=type)"""
+        return origin_pose
