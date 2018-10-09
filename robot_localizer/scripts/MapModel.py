@@ -47,6 +47,7 @@ class MapModel(object):
         # Find the closest obstacle to the predicted obstacle position
         predicted_reading = self.occupancy_field.get_closest_obstacle_distance(
                                     predicted_obstacle_x, predicted_obstacle_y)
+        print("Predicted x: {}, y: {}, reading: {}".format(predicted_obstacle_x, predicted_obstacle_y, predicted_reading))
         return predicted_reading
 
     '''

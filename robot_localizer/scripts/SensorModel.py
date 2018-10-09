@@ -17,7 +17,7 @@ class SensorModel(object):
     def update_particle_weights(self, scan_ranges, particle_list, map_model):
         for p in particle_list:
             p.weight = self.get_how_likely(scan_ranges, p.pos, map_model)
-            # print(p)
+            print(p)
 
     '''
     Function: get_how_likely
@@ -48,8 +48,14 @@ class SensorModel(object):
                 # Error in obstacle reading for this angle
                 error = map_model.get_predicted_obstacle_error(
                                             reading, pos[0], pos[1], angle_in_map)
-                total_probability += self.get_uniform_probability(map_model, error)
+                if(error != error): # Check for nan
+                    print("Got Nan")
+                    total_probability += 0
+                else:
+                    total_probability += self.get_uniform_probability(map_model, error)
         # Add together the probabilities of each angle reading, and average them.
+        if(num_angles <= 0):
+            return 0
         return total_probability / num_angles
 
     '''

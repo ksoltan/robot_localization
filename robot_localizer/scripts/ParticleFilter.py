@@ -34,7 +34,7 @@ class ParticleFilter(object):
 
         # When to run the particle filter
         self.distance_moved_threshold = 0.2 # m
-        self.angle_turned_threshold = 10 # deg
+        self.angle_turned_threshold = 3 # deg
 
         # After map model has been initialized, create the initial particle distribution
         self.p_distrib.init_particles(self.map_model)
@@ -87,7 +87,6 @@ class ParticleFilter(object):
             pose_array = self.p_distrib.get_particle_pose_array()
             pose_array.header.stamp = rospy.Time(0)
             self.particle_pose_pub.publish(pose_array)
-
 
         new_pose_estimate = self.p_distrib.get_pose_estimate() # Just Pose, not stamped
         return new_pose_estimate

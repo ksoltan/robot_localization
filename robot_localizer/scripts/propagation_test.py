@@ -81,4 +81,6 @@ class PropagationTest(object):
 
 if __name__ == "__main__":
     pt = PropagationTest()
+    pt.p_array.poses.append(pt.p.get_pose())
+    pt.particle_pose_pub.publish(pt.p_array)
     pt.run()

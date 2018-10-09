@@ -2,6 +2,7 @@ import rospy
 from math import cos, sin, sqrt, radians, degrees, atan2
 from geometry_msgs.msg import PoseStamped, PoseArray
 import tf
+import random
 
 """
 Functions
@@ -44,11 +45,11 @@ class MotionModel(object):
             # print("Got the transform")
 
             new_odom_pose = tf_helper.tf_listener.transformPose('odom', self.base_link_pose)
-            print("New Odom Pose: {}".format(new_odom_pose))
+            # print("New Odom Pose: {}".format(new_odom_pose))
             new_odom_x, new_odom_y, new_odom_theta = tf_helper.convert_pose_to_xy_and_theta(new_odom_pose.pose)
             last_odom_x, last_odom_y, last_odom_theta = tf_helper.convert_pose_to_xy_and_theta(self.last_odom_pose.pose)
 
-            print("new_odom_x: {}, new_odom_y: {}, new_odom_theta: {}".format(new_odom_x, new_odom_y, new_odom_theta))
+            # print("new_odom_x: {}, new_odom_y: {}, new_odom_theta: {}".format(new_odom_x, new_odom_y, new_odom_theta))
 
             x_change = new_odom_x - last_odom_x
             y_change = new_odom_y - last_odom_y
@@ -98,10 +99,10 @@ class MotionModel(object):
             # Change odom change to polar coordinates, rotating into particle's frame
             r = sqrt(dx**2 + dy**2)
             angle = radians(p.theta)
-            p.x += r * cos(angle)
-            p.y += r * sin(angle)
-            p.theta = (p.theta + degrees(dtheta)) % 360 # Wrap angle
-            # print(p)
+            # Include some noise for each particle:
+            p.x += r * cos(angle) + random.uniform(0, 0.3)
+            p.y += r * sin(angle) + random.uniform(0, 0.3)
+            p.theta = (p.theta + degrees(dtheta) - angle + random.uniform(0, 0.3)) % 360 # Wrap angle
 
     def get_pose_array(self):
         # Add the latest pose
