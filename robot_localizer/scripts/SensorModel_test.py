@@ -65,8 +65,8 @@ class SensorModelTest(unittest.TestCase):
                 self.scan_ranges, self.particle_list, self.map_model)
         # turn array of weights into set (only carries one instance of a thing) and if it's only one long, there was only the same thing in the array
         weight_set = set(self.helper.sketch_get_weights(self.particle_list))
-        #self.assertTrue(len(weight_set) == 1)
-        #self.assertTrue(1==1)
+        self.assertTrue(len(weight_set) == 1)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -39,9 +39,9 @@ class SensorModel(object):
         total_probability = 0
         num_angles = 0
         for angle in angles:
-            if(scan_ranges > 0.0):
+            reading = scan_ranges[angle]
+            if(reading > 0.0):
                 num_angles += 1
-                reading = scan_ranges[angle]
                 # Take into account robot's yaw
                 yaw = pos[2]
                 angle_in_map = yaw + angle
