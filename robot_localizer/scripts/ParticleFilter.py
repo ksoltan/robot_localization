@@ -75,8 +75,7 @@ class ParticleFilter(object):
         # Update particle weights based on the sensor readings.
         if(self.latest_scan_ranges != []):
             scan_ranges = self.latest_scan_ranges # Assuming this will not change the object if we get a new scan.
-            self.sensor_model.update_particle_weights(
-                            scan_ranges, self.p_distrib.particle_list, self.map_model)
+            self.sensor_model.update_particle_weights(scan_ranges, self.p_distrib.particle_list, self.map_model)
             self.p_distrib.normalize_weights()
             # Resample the particle distribution
             print("Resample")
@@ -89,6 +88,10 @@ class ParticleFilter(object):
 
         new_pose_estimate = self.p_distrib.get_pose_estimate() # Just Pose, not stamped
         return new_pose_estimate
+
+    def publish_map_markers(self):
+        # figure out map origin
+        return
 
     def run(self):
         while not rospy.is_shutdown():
