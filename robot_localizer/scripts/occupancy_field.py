@@ -43,20 +43,20 @@ class OccupancyField(object):
                 curr += 1
 
         # The coordinates of each occupied grid cell in the map
-        occupied = np.zeros((total_occupied, 2))
+        self.occupied = np.zeros((total_occupied, 2))
         curr = 0
         for i in range(self.map.info.width):
             for j in range(self.map.info.height):
                 # occupancy grids are stored in row major order
                 ind = i + j*self.map.info.width
                 if self.map.data[ind] > 0:
-                    occupied[curr, 0] = float(i)
-                    occupied[curr, 1] = float(j)
+                    self.occupied[curr, 0] = float(i)
+                    self.occupied[curr, 1] = float(j)
                     curr += 1
 
         # use super fast scikit learn nearest neighbor algorithm
         nbrs = NearestNeighbors(n_neighbors=1,
-                                algorithm="ball_tree").fit(occupied)
+                                algorithm="ball_tree").fit(self.occupied)
         distances, indices = nbrs.kneighbors(X)
 
         self.closest_occ = {}
