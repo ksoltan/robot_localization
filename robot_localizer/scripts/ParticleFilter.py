@@ -2,13 +2,15 @@
 
 import rospy
 from sensor_msgs.msg import LaserScan
-from geometry_msgs.msg import PoseArray, Pose
+from geometry_msgs.msg import PoseArray, Pose, Vector3, Point, Quaternion
+from std_msgs.msg import Header, ColorRGBA
 from ParticleDistribution import ParticleDistribution
 from MotionModel import MotionModel
 from SensorModel import SensorModel
 from MapModel import MapModel
 from helper_functions import TFHelper
 from math import sqrt, degrees
+from visualization_msgs.msg import Marker
 
 class ParticleFilter(object):
     def __init__(self):
@@ -19,6 +21,7 @@ class ParticleFilter(object):
         # Initialize publishers for visualization
         self.particle_pose_pub = rospy.Publisher('/particle_pose_array', PoseArray, queue_size=10)
         self.odom_pose_pub = rospy.Publisher('odom_pose', PoseArray, queue_size=10)
+        self.map_marker_pub = rospy.Publisher('/map_marker', Marker, queue_size=10)
         # self.particle_obstacles_pub = rospy.Publisher('/particle_obstacles', Marker, queue_size=10)
 
         self.latest_scan_ranges = []
@@ -91,7 +94,20 @@ class ParticleFilter(object):
 
     def publish_map_markers(self):
         # figure out map origin
-        return
+        map_origin_pose = self.map_model.occupancy_field.map.info.origin
+        x = map_origin_pose.position.x
+        y = map_origin_pose.position.y
+        point = Point(x,y,0.0)
+        quaternion = Quaternion(0,0,0,0)
+        header = Header(frame_id = "map",stamp=rospy.Time.now())
+        pose = map_origin_pose
+        scale = Vector3(.1,.1,.1)
+        color = ColorRGBA(255,20,147,255)
+        type = 2
+        map_origin_marker = Marker(header=header,pose=Pose(position=point, orientation=quaternion),color=color,type=type, scale=scale)
+        self.map_marker_pub.publish(map_origin_marker)
+        # publish
+
 
     def run(self):
         # Send the first map to odom transform using the 0, 0, 0 pose.
@@ -100,6 +116,8 @@ class ParticleFilter(object):
             # continuously broadcast the latest map to odom transform
             # Changes to the map to base_link come from our pose estimate from
             # the particle filter.
+
+            self.publish_map_markers()
             self.tf_helper.send_last_map_to_odom_transform()
 
             if(self.motion_model.has_moved_enough(self.tf_helper, self.distance_moved_threshold, self.angle_turned_threshold)):
