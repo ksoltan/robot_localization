@@ -58,6 +58,7 @@ class MotionModel(object):
             if(update_last_pose):
                 self.last_odom_pose = new_odom_pose
 
+            print("Changes: x:{}, y:{}, theta:{}".format(x_change, y_change, angular_change))
             return (x_change, y_change, angular_change)
 
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
@@ -79,7 +80,7 @@ class MotionModel(object):
         # Calculate Cartesian distance moved
         linear_change = sqrt(x_change**2 + y_change**2)
 
-        return linear_change > distance_moved_threshold or degrees(angular_change) > angle_turned_threshold
+        return linear_change >= distance_moved_threshold or abs(degrees(angular_change)) >= angle_turned_threshold
 
     """
     Function: predict
@@ -100,9 +101,9 @@ class MotionModel(object):
             r = sqrt(dx**2 + dy**2)
             angle = radians(p.theta)
             # Include some noise for each particle:
-            p.x += r * cos(angle) + random.uniform(0, 0.3)
-            p.y += r * sin(angle) + random.uniform(0, 0.3)
-            p.theta = (p.theta + degrees(dtheta) - angle + random.uniform(0, 0.3)) % 360 # Wrap angle
+            p.x += r * cos(angle)
+            p.y += r * sin(angle)
+            p.theta = (p.theta + degrees(dtheta) - angle) % 360 # Wrap angle
 
     def get_pose_array(self):
         # Add the latest pose

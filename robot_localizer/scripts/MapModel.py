@@ -4,6 +4,7 @@ import random
 
 class MapModel(object):
     def __init__(self):
+        # rospy.init_node("map_model_test")
         self.occupancy_field = OccupancyField()
 
     '''
@@ -16,10 +17,11 @@ class MapModel(object):
     def get_valid_point(self):
         #TODO: Use the pose estimate function, like in the example. This may need to move out of map model
         # x axis is width
-        max_width = self.occupancy_field.map.info.width * self.occupancy_field.map.info.resolution
+        max_width = self.occupancy_field.map.info.width * self.occupancy_field.map.info.resolution / 4.0
         # y axis is height
-        max_height = self.occupancy_field.map.info.height * self.occupancy_field.map.info.resolution
-        return (random.uniform(0, 2), random.uniform(0, 2))
+        max_height = self.occupancy_field.map.info.height * self.occupancy_field.map.info.resolution / 4.0
+
+        return (random.uniform(-1.0 * max_width, max_width), random.uniform(-1.0 * max_height, max_height))
 
     '''
     Function: get_predicted_obstacle_error

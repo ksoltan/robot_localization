@@ -32,7 +32,7 @@ class ParticleFilter(object):
 
         # When to run the particle filter
         self.distance_moved_threshold = 0.2 # m
-        self.angle_turned_threshold = 3 # deg
+        self.angle_turned_threshold = 10 # deg
 
         # After map model has been initialized, create the initial particle distribution
         self.p_distrib.init_particles(self.map_model)
@@ -72,19 +72,19 @@ class ParticleFilter(object):
         pose_array.header.stamp = rospy.Time(0)
         self.particle_pose_pub.publish(pose_array)
 
-        # Update particle weights based on the sensor readings.
-        if(self.latest_scan_ranges != []):
-            scan_ranges = self.latest_scan_ranges # Assuming this will not change the object if we get a new scan.
-            self.sensor_model.update_particle_weights(scan_ranges, self.p_distrib.particle_list, self.map_model)
-            self.p_distrib.normalize_weights()
-            # Resample the particle distribution
-            print("Resample")
-            self.p_distrib.resample()
-            self.p_distrib.normalize_weights()
-            # Display the new distribution
-            pose_array = self.p_distrib.get_particle_pose_array()
-            pose_array.header.stamp = rospy.Time(0)
-            self.particle_pose_pub.publish(pose_array)
+        # # Update particle weights based on the sensor readings.
+        # if(self.latest_scan_ranges != []):
+        #     scan_ranges = self.latest_scan_ranges # Assuming this will not change the object if we get a new scan.
+        #     self.sensor_model.update_particle_weights(scan_ranges, self.p_distrib.particle_list, self.map_model)
+        #     self.p_distrib.normalize_weights()
+        #     # Resample the particle distribution
+        #     print("Resample")
+        #     self.p_distrib.resample()
+        #     self.p_distrib.normalize_weights()
+        #     # Display the new distribution
+        #     pose_array = self.p_distrib.get_particle_pose_array()
+        #     pose_array.header.stamp = rospy.Time(0)
+        #     self.particle_pose_pub.publish(pose_array)
 
         new_pose_estimate = self.p_distrib.get_pose_estimate() # Just Pose, not stamped
         return new_pose_estimate
@@ -94,6 +94,7 @@ class ParticleFilter(object):
         return
 
     def run(self):
+        # Send the first map to odom transform using the 0, 0, 0 pose.
         self.tf_helper.fix_map_to_odom_transform(Pose(), rospy.Time(0))
         while not rospy.is_shutdown():
             # continuously broadcast the latest map to odom transform

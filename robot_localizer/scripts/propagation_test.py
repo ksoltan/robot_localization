@@ -36,6 +36,8 @@ class PropagationTest(object):
         self.p_array.header.stamp = rospy.Time(0)
         self.p_array.header.frame_id = "odom"
 
+        self.is_first = True
+
     def run(self):
         r = rospy.Rate(1)
         while not rospy.is_shutdown():
@@ -55,9 +57,11 @@ class PropagationTest(object):
                 angular_change = self.tf_helper.angle_diff(new_odom_theta, last_odom_theta) # radians
 
                 print("x: {}, y: {}, theta: {}".format(x_change, y_change, degrees(angular_change)))
-                self.propagate(x_change, y_change, angular_change)
+                if not self.is_first:
+                    self.propagate(x_change, y_change, angular_change)
 
                 self.last_odom_pose = new_odom_pose
+                self.is_first = False
 
                 # x = raw_input("Press Enter to continue")
                 r.sleep()
