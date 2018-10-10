@@ -93,7 +93,7 @@ class ParticleFilter(object):
         return new_pose_estimate
 
     def publish_map_markers(self):
-        # figure out map origin
+        # figure out and publish map origin
         map_origin_pose = self.map_model.occupancy_field.map.info.origin
         x = map_origin_pose.position.x
         y = map_origin_pose.position.y
@@ -107,7 +107,6 @@ class ParticleFilter(object):
         map_origin_marker = Marker(header=header,pose=Pose(position=point, orientation=quaternion),color=color,type=type, scale=scale)
         self.map_marker_pub.publish(map_origin_marker)
         # publish
-
 
     def run(self):
         self.tf_helper.fix_map_to_odom_transform(Pose(), rospy.Time(0))
