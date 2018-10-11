@@ -7,6 +7,12 @@
 # How did we do? RESULT SECTION (Some animations or results)
 - SensorModel: project scan onto ONE particle, how do these match up with actual obstacles (errors) [CHARLIE]
 - MotionModel: particle propagation, introduce some noise. [KATYA]
+
+## Motion Model
+![Alt Text](https://github.com/ksoltan/robot_localization/blob/master/robot_localizer/videos/particle_propagation.gif)
+
+
+Particle propagation without any noise.
 - ParticleFilter: Step by step animations: propagate multiple particles, update with weights (maybe make markers instead of posearray and show weight of particles with different sized arrows, but this should not be a priority), resample [KATYA].
 
 # Design Decision
