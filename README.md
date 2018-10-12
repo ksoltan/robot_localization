@@ -1,34 +1,40 @@
 # Particle Filter Implementation
-As part of the second mini project for Introduction to Computational Robotics, we designed an architecture for a particle filter implementation. Given a map, our challenge was to localize the robot on this map by using lidar and odometry readings and provide a pose estimation that would be used in a path planning algorithm or similar process. Our current implementation is not quite functioning, but all of the separate pieces of the particle filter are in place and require further testing to identify where the algorithm is behving incorrectly.
+As part of the second mini project for Introduction to Computational Robotics, we designed an architecture for a particle filter implementation. Given a map, our challenge was to localize the robot on this map by using lidar and odometry readings and provide a pose estimation that would be used in a path planning algorithm or similar process. Our current implementation is not quite functioning, but all of the separate pieces of the particle filter are in place and require further testing to identify where the algorithm is behaving incorrectly.
 
 ## Code Architecture
-Here is a diagram of the coding architecture we used in this project:
+Our approach to the particle filter consisted of one main ParticleFilter node which contained a MapModel, MotionModel, and SensorModel, and handled all subscription and publicationt to topics, as well as passing around a list of particle objects (ParticleDistribution). This architecture is depicted in the diagram below:
 
 ![Alt Text](https://github.com/ksoltan/robot_localization/blob/master/robot_localizer/videos/particlefilter_codearchitecture.png)
 
-In general, we had a main ParticleFilter class that interacted with 4 other active classes (ParticleDistribution, MapModel, MotionModel, and SensorModel), which passed around and manipulated a particle list (or distribution, if you prefer) with particle positions and weights.
+The MotionModel class handles the changing odometry, tracking when the robot has moved far enough to merit updating the filter, and propagating particles to reflect this change.
 
-## Results from Models
-### Motion Model
-Each particle needs to respond to the robot's movement which is represented by a change in the base_link -> odom transform. The position and orientation odom change is used to propagate each particle within a hypothetical base_link frame centered at each particle's pose (illustrated below). This propagation step can also include noise to account for the discrepancies in the odometry readings.
+The SensorModel is responsible for projecting the lidar data into each particle's frame and calculating the likelihood that the scan came from a given particle.
+
+The MapModel provides an interface to the given OccupancyField class which stores information about the map and how far obstacles are from any given point on the map. The MapModel is used by SensorModel for likelihood calculations.
+
+The ParticleDistribution class contains a list of particles as well as some helper functions that resample the particles based on their weights as well as normalizing the weights.
+
+## Filtering Steps
+The particle filter updates when the robot has moved or turned a certain threshold distance. First, each particle in the distribution is propagated to reflect the change in position. Next, each particle's weight is updated based on how likely the lidar readings are from its pose. These weights are then normalized and the entire distribution is resampled based on the new probability distribution. A weighted average of all of the particle's poses generates an estimated robot pose which is then used to update the odom -> map transform.
+
+### Propagation (MotionModel)
+Each particle needs to respond to the robot's movement which is represented by a change in the base_link -> odom transform. The odometry's position and orientation change is used to propagate each particle within a hypothetical base_link frame centered at each particle's pose, illustrated below. 
 
 ![Alt Text](https://github.com/ksoltan/robot_localization/blob/master/robot_localizer/videos/particle_propagation.gif)
 
-Above, the blue pose arrows represent the robot's odometry readings while the yellow poses are particles that follow the change in odom. As the robot turns, each particle performs the same rotation in its own frame of reference.
+Above, the blue pose arrows represent the robot's odometry readings while the yellow poses are particles that mimic the change in odom. As the robot turns, each particle performs the same rotation in its own frame of reference. This propagation step can also include noise to account for the discrepancies in the odometry readings.
 
-Particle propagation without any noise.
-- ParticleFilter: Step by step animations: propagate multiple particles, update with weights (maybe make markers instead of posearray and show weight of particles with different sized arrows, but this should not be a priority), resample [KATYA].
-
-### SensorModel
-Once particles have been propogated forward, we need to find the error between the obstacles sensed by the robot and the obstacles near each particle in the map.
+### Likelihood Update (SensorModel)
+Once particles have been propagated, the likelihood of each particle given new sensor readings is determined by finding the error between the obstacles sensed by the robot and the obstacles near each particle in the map. Below is an illustration of this process. 
 
 ![Alt Text](https://github.com/ksoltan/robot_localization/blob/master/robot_localizer/videos/error_validation_fixed.png)
 
-Above, you see an example of how this looks. The robot (unseen) has four detected obstacles, each one meter away from it at 0, 90, 180, and 270 degrees. The green dots are projections that represent where those obstacles should be in relation to a particle (red). However, you can see that the obstacles around the particle aren't located at those positions. 
+The robot (unseen) has four detected obstacles, each one meter away at 0, 90, 180, and 270 degrees. The green dots are projections that represent where those obstacles should be in relation to one particle (red). The pale blue circles have a radius corresponding to the error between the projected reading and the nearest obstacle at that point (found using the OccupancyField). The likelihood is inversely proportional to the distance: the error at 0 and 180 degrees gives the particle a low propbability, while the relatively low errors at 90 and 270 degrees give it a likelihood closer to 1.
 
-Our SensorModel makes use of the MapModel's occupancy field to get the distance to each projection's nearest obstacle. The radius of that distance is shown in pale blue around the green dots. For example, you can see that the model knows the top projection is much farther from its nearest obstacle (has greater "error") than the projection to the right (which has less error).
+This process is repeated for a configurable number of angles of the lidar scan for each particle. The overall likelihood of each particle is calculated as the sum of the cubes of these errors. The cube is used to give low errors a higher weight in the total probability, rewarding more correct readings and not penalizing too steeply for high-error readings.
 
-While the image only shows four projections, SensorModel as it stands actually obtains the error for 7 different scans per particle. It then calculates the overall likelihood of that particle using the errors from each scan. The more scans with high errors, the less likely that particle is to be accurate.
+### Resampling (ParticleDistribution)
+With new particle likelihoods, the particle distribution is updated by resampling particles using the new probability distribution.
 
 ## Design Choices
 Our goal was to develop and test each discrete step of the particle filter separately. The approach was to devise a high-level architecture and fill in functionality based on unit tests. Additionally, we aimed to start with the most simplest implementation possible, introducing better probability functions and noise models, which would simply consistute a change in the class representing the impacted step.
