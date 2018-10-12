@@ -36,51 +36,37 @@ This process is repeated for a configurable number of angles of the lidar scan f
 ### Resampling (ParticleDistribution)
 With new particle likelihoods, the particle distribution is updated by resampling particles using the new probability distribution.
 
-## Design Choices
-Our goal was to develop and test each discrete step of the particle filter separately. The approach was to devise a high-level architecture and fill in functionality based on unit tests. Additionally, we aimed to start with the most simplest implementation possible, introducing better probability functions and noise models, which would simply consistute a change in the class representing the impacted step.
+## Design Choices and Challenges
+### Unit Test Driven
+Our goal was to develop and test each discrete step of the particle filter separately and to later integrate the pieces. Our approach was to devise a high-level modular architecture and fill in functionality based on unit tests. Additionally, we aimed to start with the most simplest implementation possible, introducing better probability functions and noise models, which would simply consistute a change in the class representing the impacted step.
 
-- Unittesting! [KATYA]
-  - not useful for everything. Maybe a better thing would be to get things working separately and then stick them together. Also, not super great for noise...
-  - Initial code architecture to modularize things
-  
-- Odometry-based movement vs timing-based movement. -> wanted to do simplest thing, but really didn't focus correctly [CHARLIE]
+While a unit testing framework helped catch some poor implementations of mostly mathematical functions, such as resampling and propagation, it was difficult to test the random probability updates as well as the intuitive "what should happen" at each step. Towards the end of the project, we began to implement parts of the filter in semi-isolation and use rviz more heavily to visually validate each function. This helped us identify some fundamental problems, like strange angles due to radian/degree conversions and understand how the transforms between coordinate system should behave.
 
-### Odometry-based vs time-based movement (@katya, check me on this, I'm a little rusty)
-We initially set out on this project believing timing-based movement would be the simplest method of movement to implement in order to propagate particles. However, this actually introduced unneeded complexity into the system. By implementing timing-based movement, we would have created yet another error-prone coordinate frame, that would certainly have mapped inaccurately to the odometry and map frames. While at first timing-based movement seemed straight-forward and approachable, it wasn't the right focus for the problem we were working on, and it was worth making the switch.
+### Odometry-based vs Time-based Movement
+Our initial approach to the project was to teleoperate the robot and predict the robot's movement using a desired velocity and time-based model. We believed this would be the simplest method of implementation since we had worked extensively with cmd_vel before and we could work in a single frame (map). However, this actually introduced unneeded complexity into the system because we still needed to have an odom -> map transform. Additionally, the time-based model is not by any means a reliable prediction of how the robot has actually moved. While at first timing-based movement seemed straight-forward and approachable, it wasn't the right focus for the problem we were working on, and it was worth making the switch,.
 
-## Challenges [KATYA]
-- Transforms....what the heck is going on...but we figured it out! ish....map ->odom->base_link (how long it took us to ask that question...)
-- figuring out depth of this project: conceptually, totally get it. Implementation-wise, what...?! A lot of unknown players like tf...
-
-## What would we improve?
-
-There are two main improvements we'd like to have in this project:
-
-1. MVP vs. Complex Code Architecture
-2. Conceptual focus rather than implementation struggle
+## Future Improvements
+There are two main improvements we would like to have in this project, besides finding the current bug in our implementation and seeing the particles converge on an accurate predicted pose, which center around our process and approach.
 
 ### MVP vs. Complex Code Architecture
-We approached our particle filter project with a fully laid out code architecture, with different functions elegantly laid out in their relevant classes, and a confident yet somewhat vague idea of how they would all interact.
+Perhaps a better approach to the project would have been to start with implementing very rough filtering operations on one or two particles, seeing them through the entire algorithm, and then creating a better architecture that scales to more particles. The most challenging part of our approach was that although we had a fully laid-out architecture, we were not entirely sure of all of the components that would have to interact or what fundamental issues we might encounter across the full implementation.
 
-In retrospect, this may not have been the best idea. We ended up filling in the classes and encountering problems in several files at once, many of which had to be tracked down a few levels to find some fundamental issue. The original architecture would have looked beautiful in a final product, but it was quite the headache as a first pass. If we were to build this again, we think it would have been better to put ideas together in one place, and separate functionality out into different classes once we had a better idea of how they would intuitively group, and what fundamental issues we might encounter across the full implementation.
+### Conceptual vs. Implementational Focus
+Because we spent so much time debugging and thinking through a complex interaction of components, we were not able to focus on the more interesting mathematical aspects of particle filters. It would have been much more interesting to dive into the weeds of probability algorithms and their computational strengths and limitations, which we may have been able to do with a less ambitious MVP. Our current propagation model does not include noise, and the likelihood updates are based on an average of probabilities rather than at least a Gaussian distribution.
 
-### Conceptual focus rather than implementation struggle
-This leads us to the next woe: Because we had to spend so much time debugging and thinking through implementation, we weren't able to focus on the more interesting mathematical aspects of particle filters. It would have been much more interesting to dive in the weeds of probability algorithms and their computational strengths and limitations, which we may have been able to do with a less ambitious MVP.
-
-## Interesting lessons?
-We learned several interesting lessons from this project:
+## Interesting lessons
+We learned several interesting lessons throughout this project:
 
 - The most direct thing you understand may not be the best, ultimately.
-  - Like written above, we initally went for timing-based movement because it seemed more conceptually accessible. It would actually have complicated the project quite a bit.
+  - Like written above, we initally went for timing-based movement because it seemed more conceptually accessible. It actually have complicated the project quite a bit.
 - Ask for help early to avoid rabbit-hole timesinks
-  - I (Charlie) have run into this problem in multiple projects, where lack of context for the problem I'm working on leads me to spend a lot of time hacking away at something with a simple solution. A conversation with a professor early on about even the most general aspects of the project can save way more time than a trouble-shooting conversation later, once you're already at the bottom of the well.
+  - We have run into this problem in multiple projects, where lack of context for the problems we are working on leads us to spend a lot of time hacking away at something with a simple solution. A conversation with a professor early on about even the most general aspects of the project can save a lot more time than a trouble-shooting conversation later, once you are already at the bottom of the well.
+- Unit testing is only as good as your overall understanding of the system.
+  - Because we did not have a detailed understanding of each of the necessary elements, we did not design very good unit tests. One way we could have had a better picture of what we should be testing for is running the built-in particle filter and writing tests based on its output. This approach would have also created a built-in benchmark for our algorith.
 
 
-- unittesting was useful for some things, some bugs, but not as useful for the more basic ones because you were testing your concept of what was there and not what was there.
-
-
-Additionally, here's a small list of some good, basic implementation lessons for future projects:
-1. NEVER USE DEGREES. It's more intuitive, sure, but you will absolutely lose track of your conversions. Use default radians.
+Additionally, here is a small list of some good, basic implementation lessons for future projects:
+1. NEVER USE DEGREES. It is more intuitive, sure, but you will absolutely lose track of your conversions. Use default radians and only print using degrees for readability.
 2. Check that you have the same workspace as your partner. More specifically, the same version of python.
 
 
