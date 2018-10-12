@@ -12,7 +12,7 @@ Each particle needs to respond to the robot's movement which is represented by a
 
 ![Alt Text](https://github.com/ksoltan/robot_localization/blob/master/robot_localizer/videos/particle_propagation.gif)
 
-Above, the blue pose arrows represent the robot's odometry readings while the yellow poses are particles that follow the change in odom.
+Above, the blue pose arrows represent the robot's odometry readings while the yellow poses are particles that follow the change in odom. As the robot turns, each particle performs the same rotation in its own frame of reference.
 
 Particle propagation without any noise.
 - ParticleFilter: Step by step animations: propagate multiple particles, update with weights (maybe make markers instead of posearray and show weight of particles with different sized arrows, but this should not be a priority), resample [KATYA].
