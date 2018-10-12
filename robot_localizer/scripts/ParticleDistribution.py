@@ -90,10 +90,10 @@ class ParticleDistribution(object):
     '''
     def get_normalized_weights(self):
         weights = self.get_weights()
-        print("Getting normalized weights: {}".format(weights))
+        # print("Getting normalized weights: {}".format(weights))
         total = sum(weights) * 1.0
-        print("New normalized weights: {}".format([w / total for w in weights]))
-        return [w / total for w in weights]
+        # print("New normalized weights: {}".format([w / total for w in weights]))
+        # return [w / total for w in weights]
 
     '''
     Function: get_particle_pose_array
