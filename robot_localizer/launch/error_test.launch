@@ -1,0 +1,28 @@
+<launch>
+  <param name="use_sim_time" value="true"/>
+  <arg name="scan_topic" default="stable_scan"/>
+  <arg name="use_builtin" default="false"/>
+  <arg name="map_name" default="mymap"/>
+  <arg name="bag_name" default="middle"/>
+
+  <node name="map_server" pkg="map_server" type="map_server" args="$(find robot_localizer)/maps/$(arg map_name).yaml"/>
+  <node name="bag_player" pkg="rosbag" type="play" args="$(find robot_localizer)/bags/$(arg bag_name).bag --clock --pause" output="screen"/>
+
+  <include file="$(find neato_node)/launch/set_urdf.launch"/>
+
+ <group if="$(arg use_builtin)">
+  <include file="$(find neato_2dnav)/launch/includes/amcl.launch.xml">
+    <arg name="scan_topic" value="$(arg scan_topic)"/>
+    <arg name="initial_pose_x" value="0.0"/>
+    <arg name="initial_pose_y" value="0.0"/>
+    <arg name="initial_pose_a" value="0.0"/>
+  </include>
+ </group>
+
+ <group unless="$(arg use_builtin)">
+  <node name="error_validation" pkg="robot_localizer" type="particle_error_validation.py" output="screen">
+    <remap from="scan" to="$(arg scan_topic)"/>
+  </node>
+</group>
+
+</launch>

@@ -50,6 +50,7 @@ class OccupancyField(object):
                 # occupancy grids are stored in row major order
                 ind = i + j*self.map.info.width
                 if self.map.data[ind] > 0:
+                    # stores, in order, coordinates of occupied cell (Ex: [(0,1),(0,3)] where curr is [0] or [1])
                     self.occupied[curr, 0] = float(i)
                     self.occupied[curr, 1] = float(j)
                     curr += 1
@@ -87,3 +88,4 @@ class OccupancyField(object):
         if ind >= self.map.info.width*self.map.info.height or ind < 0:
             return float('nan')
         return self.closest_occ[ind]
+
