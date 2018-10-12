@@ -1,12 +1,14 @@
 # Particle Filter Implementation
 As part of the second mini project for Introduction to Computational Robotics, we designed an architecture for a particle filter implementation. Given a map, our challenge was to localize the robot on this map by using lidar and odometry readings and provide a pose estimation that would be used in a path planning algorithm or similar process. Our current implementation is not quite functioning, but all of the separate pieces of the particle filter are in place and require further testing to identify where the algorithm is behving incorrectly.
 
-## Code Architecture diagram [CHARLIE]
+## Code Architecture
+Here is a diagram of the coding architecture we used in this project:
 
 ![Alt Text](https://github.com/ksoltan/robot_localization/blob/master/robot_localizer/videos/particlefilter_codearchitecture.png)
 
-## How did we do? RESULT SECTION (Some animations or results)
+In general, we had a main ParticleFilter class that interacted with 4 other active classes (ParticleDistribution, MapModel, MotionModel, and SensorModel), which passed around and manipulated a particle list (or distribution, if you prefer) with particle positions and weights.
 
+## Results from Models
 ### Motion Model
 Each particle needs to respond to the robot's movement which is represented by a change in the base_link -> odom transform. The position and orientation odom change is used to propagate each particle within a hypothetical base_link frame centered at each particle's pose (illustrated below). This propagation step can also include noise to account for the discrepancies in the odometry readings.
 
@@ -44,7 +46,7 @@ We initially set out on this project believing timing-based movement would be th
 - Transforms....what the heck is going on...but we figured it out! ish....map ->odom->base_link (how long it took us to ask that question...)
 - figuring out depth of this project: conceptually, totally get it. Implementation-wise, what...?! A lot of unknown players like tf...
 
-## What would we improve? [CHARLIE]
+## What would we improve?
 
 There are two main improvements we'd like to have in this project:
 
@@ -59,7 +61,7 @@ In retrospect, this may not have been the best idea. We ended up filling in the 
 ### Conceptual focus rather than implementation struggle
 This leads us to the next woe: Because we had to spend so much time debugging and thinking through implementation, we weren't able to focus on the more interesting mathematical aspects of particle filters. It would have been much more interesting to dive in the weeds of probability algorithms and their computational strengths and limitations, which we may have been able to do with a less ambitious MVP.
 
-## Interesting lessons? [CHARLIE UND KATYA]
+## Interesting lessons?
 We learned several interesting lessons from this project:
 
 - The most direct thing you understand may not be the best, ultimately.
