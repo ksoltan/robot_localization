@@ -5,7 +5,6 @@ As part of the second mini project for Introduction to Computational Robotics, w
 
 ## How did we do? RESULT SECTION (Some animations or results)
 - SensorModel: project scan onto ONE particle, how do these match up with actual obstacles (errors) [CHARLIE]
-- MotionModel: particle propagation, introduce some noise. [KATYA]
 
 ## Motion Model
 Each particle needs to respond to the robot's movement which is represented by a change in the base_link -> odom transform. The position and orientation odom change is used to propagate each particle within a hypothetical base_link frame centered at each particle's pose (illustrated below). This propagation step can also include noise to account for the discrepancies in the odometry readings.
@@ -18,6 +17,8 @@ Particle propagation without any noise.
 - ParticleFilter: Step by step animations: propagate multiple particles, update with weights (maybe make markers instead of posearray and show weight of particles with different sized arrows, but this should not be a priority), resample [KATYA].
 
 ## Design Choices
+Our goal was to develop and test each discrete step of the particle filter separately. The approach was to devise a high-level architecture and fill in functionality based on unit tests. Additionally, we aimed to start with the most simplest implementation possible, introducing better probability functions and noise models, which would simply consistute a change in the class representing the impacted step.
+
 - Unittesting! [KATYA]
   - not useful for everything. Maybe a better thing would be to get things working separately and then stick them together. Also, not super great for noise...
   - Initial code architecture to modularize things
