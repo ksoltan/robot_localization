@@ -7,7 +7,7 @@ As part of the second mini project for Introduction to Computational Robotics, w
 
 ## How did we do? RESULT SECTION (Some animations or results)
 
-## Motion Model
+### Motion Model
 Each particle needs to respond to the robot's movement which is represented by a change in the base_link -> odom transform. The position and orientation odom change is used to propagate each particle within a hypothetical base_link frame centered at each particle's pose (illustrated below). This propagation step can also include noise to account for the discrepancies in the odometry readings.
 
 ![Alt Text](https://github.com/ksoltan/robot_localization/blob/master/robot_localizer/videos/particle_propagation.gif)
@@ -17,7 +17,7 @@ Above, the blue pose arrows represent the robot's odometry readings while the ye
 Particle propagation without any noise.
 - ParticleFilter: Step by step animations: propagate multiple particles, update with weights (maybe make markers instead of posearray and show weight of particles with different sized arrows, but this should not be a priority), resample [KATYA].
 
-## SensorModel
+### SensorModel
 Once particles have been propogated forward, we need to find the error between the obstacles sensed by the robot and the obstacles near each particle in the map.
 
 ![Alt Text](https://github.com/ksoltan/robot_localization/blob/master/robot_localizer/videos/error_validation_fixed.png)
@@ -34,13 +34,20 @@ Our goal was to develop and test each discrete step of the particle filter separ
 - Unittesting! [KATYA]
   - not useful for everything. Maybe a better thing would be to get things working separately and then stick them together. Also, not super great for noise...
   - Initial code architecture to modularize things
+  
 - Odometry-based movement vs timing-based movement. -> wanted to do simplest thing, but really didn't focus correctly [CHARLIE]
+
+### Odometry-based vs time-based movement (@katya, check me on this, I'm a little rusty)
+We initially set out on this project believing timing-based movement would be the simplest method of movement to implement in order to propagate particles. However, this actually introduced unneeded complexity into the system. By implementing timing-based movement, we would have created yet another error-prone coordinate frame, that would certainly have mapped inaccurately to the odometry and map frames. While at first timing-based movement seemed straight-forward and approachable, it wasn't the right focus for the problem we were working on, and it was worth making the switch.
 
 ## Challenges [KATYA]
 - Transforms....what the heck is going on...but we figured it out! ish....map ->odom->base_link (how long it took us to ask that question...)
 - figuring out depth of this project: conceptually, totally get it. Implementation-wise, what...?! A lot of unknown players like tf...
 
 ## What would we improve? [CHARLIE]
+
+
+
 - Process: do actual simplest model rather than filling in complex code architecture.
 - PF: actual likelihood functions. Mathematical improvements rather than in working.
 
@@ -49,3 +56,5 @@ Our goal was to develop and test each discrete step of the particle filter separ
 - unittesting was useful for some things, some bugs, but not as useful for the more basic ones because you were testing your concept of what was there and not what was there.
 - NEVER USE DEGREES. ALWAYS U SE RADIANS. USE DEGREES ONLY IN PRINT STATEMENTS.
 - same type of python...would be good. Initial workspace assumptions!
+
+
