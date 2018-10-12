@@ -8,9 +8,9 @@ Our approach to the particle filter consisted of one main ParticleFilter node wh
 
 The MotionModel class handles the changing odometry, tracking when the robot has moved far enough to merit updating the filter, and propagating particles to reflect this change.
 
-The SensorModel is responsible for projecting the lidar data into each particle's frame and calculating the likelihood that the scan came from a given particle.
+The SensorModel is responsible for calculating the likelihood that a scan came from a given particle.
 
-The MapModel provides an interface to the given OccupancyField class which stores information about the map and how far obstacles are from any given point on the map. The MapModel is used by SensorModel for likelihood calculations.
+The MapModel provides an interface to the given OccupancyField class which stores information about the map and how far obstacles are from any given point on the map. The MapModel projects the lidar data into each particle's frame and is used by SensorModel for likelihood calculations.
 
 The ParticleDistribution class contains a list of particles as well as some helper functions that resample the particles based on their weights as well as normalizing the weights.
 
