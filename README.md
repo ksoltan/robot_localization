@@ -60,9 +60,19 @@ In retrospect, this may not have been the best idea. We ended up filling in the 
 This leads us to the next woe: Because we had to spend so much time debugging and thinking through implementation, we weren't able to focus on the more interesting mathematical aspects of particle filters. It would have been much more interesting to dive in the weeds of probability algorithms and their computational strengths and limitations, which we may have been able to do with a less ambitious MVP.
 
 ## Interesting lessons? [CHARLIE UND KATYA]
-- most direct thing you understand, may not be the best ultimately.
+We learned several interesting lessons from this project:
+
+- The most direct thing you understand may not be the best, ultimately.
+  - Like written above, we initally went for timing-based movement because it seemed more conceptually accessible. It would actually have complicated the project quite a bit.
+- Ask for help early to avoid rabbit-hole timesinks
+  - I (Charlie) have run into this problem in multiple projects, where lack of context for the problem I'm working on leads me to spend a lot of time hacking away at something with a simple solution. A conversation with a professor early on about even the most general aspects of the project can save way more time than a trouble-shooting conversation later, once you're already at the bottom of the well.
+
+
 - unittesting was useful for some things, some bugs, but not as useful for the more basic ones because you were testing your concept of what was there and not what was there.
-- NEVER USE DEGREES. ALWAYS U SE RADIANS. USE DEGREES ONLY IN PRINT STATEMENTS.
-- same type of python...would be good. Initial workspace assumptions!
+
+
+Additionally, here's a small list of some good, basic implementation lessons for future projects:
+1. NEVER USE DEGREES. It's more intuitive, sure, but you will absolutely lose track of your conversions. Use default radians.
+2. Check that you have the same workspace as your partner. More specifically, the same version of python.
 
 
