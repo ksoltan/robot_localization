@@ -101,9 +101,9 @@ class MotionModel(object):
             r = sqrt(dx**2 + dy**2)
             angle = radians(p.theta)
             # Include some noise for each particle:
-            p.x += r * cos(angle)
-            p.y += r * sin(angle)
-            p.theta = (p.theta + degrees(dtheta) - angle) % 360 # Wrap angle
+            p.x += r * cos(angle) + random.uniform(-0.1, 0.1)
+            p.y += r * sin(angle) + random.uniform(-0.1, 0.1)
+            p.theta = (p.theta + degrees(dtheta) - angle  + random.uniform(-0.5, 0.5)) % 360 # Wrap angle
 
     def get_pose_array(self):
         # Add the latest pose

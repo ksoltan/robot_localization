@@ -7,7 +7,6 @@ import random
 
 class MapModel(object):
     def __init__(self):
-        # rospy.init_node("map_model_test")
         self.occupancy_field = OccupancyField()
 
     '''

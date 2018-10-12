@@ -75,12 +75,12 @@ class SensorLikelihoodTest(object):
 
                     new_odom_pose_map = self.tf_helper.tf_listener.transformPose('map', new_odom_pose)
 
-                    # Update particle  to be in odom for check
-                    x, y, theta = self.tf_helper.convert_pose_to_xy_and_theta(new_odom_pose_map.pose)
-
-                    self.p.x = x
-                    self.p.y = y
-                    self.p.theta = theta
+                    # # Update particle  to be in odom for check
+                    # x, y, theta = self.tf_helper.convert_pose_to_xy_and_theta(new_odom_pose_map.pose)
+                    #
+                    # self.p.x = x
+                    # self.p.y = y
+                    # self.p.theta = theta
 
                     self.get_how_likely()
 

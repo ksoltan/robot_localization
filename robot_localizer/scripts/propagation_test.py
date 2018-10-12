@@ -34,7 +34,7 @@ class PropagationTest(object):
         self.p = Particle(x=0,y=0,theta=180, weight=0)
         self.p_array = PoseArray()
         self.p_array.header.stamp = rospy.Time(0)
-        self.p_array.header.frame_id = "odom"
+        self.p_array.header.frame_id = "map"
 
         self.is_first = True
 
@@ -63,6 +63,7 @@ class PropagationTest(object):
                 self.last_odom_pose = new_odom_pose
                 self.is_first = False
 
+                self.tf_helper.send_last_map_to_odom_transform()
                 # x = raw_input("Press Enter to continue")
                 r.sleep()
 
