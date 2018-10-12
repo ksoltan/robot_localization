@@ -36,7 +36,7 @@ This process is repeated for a configurable number of angles of the lidar scan f
 ### Resampling (ParticleDistribution)
 With new particle likelihoods, the particle distribution is updated by resampling particles using the new probability distribution, illustrated below.
 
-![Alt Text](https://github.com/ksoltan/robot_localization/blob/master/robot_localizer/videos/resampling.png)
+![Alt Text](https://github.com/ksoltan/robot_localization/blob/master/robot_localizer/videos/resampling.gif)
 
 Each red pose represents a particle. The sphere marker's color and scale shows the weight of the particle: the more blue and larger it is, the higher weight the particle has. A random distribution of particles is first generated and then resampled. After each resampling, the particles are assigned random orientations to show that resampling happens with replacement. In general, you can see how the particles begin to cluster around certain areas.
 
