@@ -108,7 +108,7 @@ class ParticleDistribution(object):
 
         for p in self.particle_list:
             pose_array.poses.append(p.get_pose())
-
+        print pose_array
         return pose_array
 
     def get_pose_estimate(self):
