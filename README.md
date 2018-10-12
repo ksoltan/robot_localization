@@ -11,6 +11,7 @@ As part of the second mini project for Introduction to Computational Robotics, w
 Each particle needs to respond to the robot's movement which is represented by a change in the base_link -> odom transform. The position and orientation odom change is used to propagate each particle within a hypothetical base_link frame centered at each particle's pose (illustrated below). This propagation step can also include noise to account for the discrepancies in the odometry readings.
 
 ![Alt Text](https://github.com/ksoltan/robot_localization/blob/master/robot_localizer/videos/particle_propagation.gif)
+
 Above, the blue pose arrows represent the robot's odometry readings while the yellow poses are particles that follow the change in odom.
 
 Particle propagation without any noise.
