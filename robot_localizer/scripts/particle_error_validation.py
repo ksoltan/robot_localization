@@ -24,9 +24,15 @@ from occupancy_field import OccupancyField
 class ParticleErrorValidation(object):
     def __init__(self):
         rospy.init_node('error_validation_node')
+        # Initialize subscribers to sensors and motors
+        rospy.Subscriber('/scan', LaserScan, self.read_sensor)
+    
         # Initialize publishers for visualization
         self.error_markers_pub = rospy.Publisher('/error_markers', MarkerArray, queue_size=10)
+        self.odom_pose_pub = rospy.Publisher('odom_particle_pose', Pose, queue_size=10)
         
+        self.latest_scan_ranges = []
+
         # pose_listener responds to selection of a new approximate robot
         # location (for instance using rviz)
         rospy.Subscriber("initialpose",
@@ -37,12 +43,22 @@ class ParticleErrorValidation(object):
         # Class initializations
         self.map_model = MapModel()
         self.tf_helper = TFHelper()
+        self.motion_model = MotionModel()
+        self.sensor_model = SensorModel()
 
-        """for error validation"""
-        self.particle = Particle(x=0,y=0,theta=0,weight=1)
+        """for static error validation"""
+        self.static_particle = Particle(x=0,y=0,theta=0,weight=1)
         self.sample_ranges = np.ones(361)
         self.predicted_obstacle_x = 0.0
         self.predicted_obstacle_y = 0.0
+
+    def read_sensor(self, scan_msg):
+        self.latest_scan_ranges = scan_msg.ranges
+
+    def update_particle_pose(self):
+        particle_pose = self.motion_model.last_odom_pose.pose
+        print(particle_pose.position.x,particle_pose.position.y)
+        self.odom_pose_pub.publish(particle_pose)
 
     def update_initial_pose(self, msg):
         """ Callback function to handle re-initializing the particle filter
@@ -70,14 +86,14 @@ class ParticleErrorValidation(object):
     def move_coordinate(self, x, y, angle, distance):
         return (x + cos(radians(angle)) * distance, y + sin(radians(angle)) * distance)
 
-    def publish_marker_array(self):
+    def publish_static_marker_array(self):
         # universal constraints
         header = Header(frame_id = "map",stamp=rospy.Time.now())
         type = 2
         # publish
         # particle marker: RED
-        particle_x = self.particle.x
-        particle_y = self.particle.y
+        particle_x = self.static_particle.x
+        particle_y = self.static_particle.y
         particle_point = Point(particle_x,particle_y,0.0)
         particle_scale = Vector3(.1,.1,.1)
         particle_color = ColorRGBA(255,0,0,1)
@@ -122,8 +138,9 @@ class ParticleErrorValidation(object):
             # Changes to the map to base_link come from our pose estimate from
             # the particle filter.
 
+            self.update_particle_pose()
             self.tf_helper.send_last_map_to_odom_transform()
-            self.publish_marker_array()
+            #self.publish_static_marker_array()
 
 if __name__ == "__main__":
     p_error = ParticleErrorValidation()
