@@ -46,10 +46,18 @@ We initially set out on this project believing timing-based movement would be th
 
 ## What would we improve? [CHARLIE]
 
+There are two main improvements we'd like to have in this project:
 
+1. MVP vs. Complex Code Architecture
+2. Conceptual focus rather than implementation struggle
 
-- Process: do actual simplest model rather than filling in complex code architecture.
-- PF: actual likelihood functions. Mathematical improvements rather than in working.
+### MVP vs. Complex Code Architecture
+We approached our particle filter project with a fully laid out code architecture, with different functions elegantly laid out in their relevant classes, and a confident yet somewhat vague idea of how they would all interact.
+
+In retrospect, this may not have been the best idea. We ended up filling in the classes and encountering problems in several files at once, many of which had to be tracked down a few levels to find some fundamental issue. The original architecture would have looked beautiful in a final product, but it was quite the headache as a first pass. If we were to build this again, we think it would have been better to put ideas together in one place, and separate functionality out into different classes once we had a better idea of how they would intuitively group, and what fundamental issues we might encounter across the full implementation.
+
+### Conceptual focus rather than implementation struggle
+This leads us to the next woe: Because we had to spend so much time debugging and thinking through implementation, we weren't able to focus on the more interesting mathematical aspects of particle filters. It would have been much more interesting to dive in the weeds of probability algorithms and their computational strengths and limitations, which we may have been able to do with a less ambitious MVP.
 
 ## Interesting lessons? [CHARLIE UND KATYA]
 - most direct thing you understand, may not be the best ultimately.
